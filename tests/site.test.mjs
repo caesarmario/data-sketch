@@ -124,6 +124,10 @@ test('metadata, schema, sitemap and text endpoints are route-aware and source-sa
   assert.ok(files['_headers'].includes('/llms.txt'));
   assert.ok(files['_redirects'].includes('/* /404.html 404'));
   assert.ok(!files['_redirects'].includes(' 200'));
+  for (const route of routeManifest.filter(entry => entry.kind === 'lesson')) {
+    assert.ok(!files['_redirects'].includes(`${route.path.slice(0, -1)} ${route.path} 301!`));
+    assert.ok(files['_redirects'].includes(`${route.path}index.html ${route.path} 301!`));
+  }
   assert.ok(files['404.html'].includes('noindex, nofollow'));
 });
 

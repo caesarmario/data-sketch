@@ -164,8 +164,14 @@ ${preview ? '  X-Robots-Tag: noindex, nofollow\n' : ''}
   const sitemapEntries = preview ? '' : routeManifest
     .map(route => `<url><loc>${absoluteUrl(route.path)}</loc><lastmod>${siteConfig.contentUpdated}</lastmod></url>`)
     .join('');
+  // Netlify's Pretty URLs already normalizes extensionless directory paths.
+  // A forced slashless -> trailing-slash rule also matches the canonical path
+  // on Netlify and creates a self-redirect loop, so only explicit HTML aliases
+  // belong in the deployed redirect file. Vite still uses every routeAlias.
+  const netlifyAliases = [...routeAliases.entries()].filter(([from]) =>
+    from === '/index.html' || from.endsWith('/index.html'));
   const redirects = [
-    ...routeAliases.entries().map(([from, to]) => `${from} ${to} 301!`),
+    ...netlifyAliases.map(([from, to]) => `${from} ${to} 301!`),
     '/404.html /404.html 404!',
     '/* /404.html 404',
   ].join('\n') + '\n';
