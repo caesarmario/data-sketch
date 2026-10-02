@@ -1,0 +1,39 @@
+DATA SKETCH - LAUNCH CHECKLIST
+Updated: 2026-10-02
+
+[x] Standalone React/Vite/Tailwind repo, release 1.0.0, separate launch branch.
+[x] Header wordmark, editorial hero, one responsive gallery DOM, footer/social links.
+[x] Header/footer refinement: remove node diagram, halve responsive wordmark width
+    while keeping 44px target, add globe / Visit my website, and keep spaced counts.
+[x] Restore layered green glow, overlay and 260ms lift for live cards only, including
+    keyboard focus. Reduced motion disables transform; teaser cards remain static.
+[x] Remove footer eyebrow and upper divider; retain follow CTA and lower divider.
+    Attribution is now Made by Mario Caesar, with the author linked to portfolio.
+[x] Episodes 01-04 copied with existing content; 05-06 remain asset-free teasers.
+[x] All episode fields verified against portfolio commit 93f1645; four episode
+    image hashes and the supplied logo bytes match their original sources.
+[x] SSR prerender plus hydration, sorting, CSS motion and reduced-motion fallback.
+[x] Four source-bound lesson pages, route-specific metadata/schema, gallery sibling
+    links, skip navigation, back-to-top progress, and fixed humans/llms utilities.
+[x] Editorial audit applies anti-slop-writing, humanizer, then stop-slop while
+    preserving source meaning, official names, dates, technical terms, and URLs.
+[x] SEO config for subdomain, generated sitemap/headers/404, dedicated analytics opt-in.
+[x] Separate Netlify config and documented staged cutover/rollback.
+[x] Typecheck, lint, production build, 10 automated tests and seo:check pass.
+[x] Actual preview-context build: noindex HTML/headers, no analytics, empty sitemap.
+[x] Dev/preview HTTP: assets 200, unknown/unreleased assets 404, index redirect 301.
+[x] Portfolio dev/preview: 8 fixed mappings work; 11 unaffected routes respond 200.
+[x] Bundle after four lesson routes: main JS 168.88 KB / gzip 53.98 KB;
+    CSS 20.35 KB / gzip 5.00 KB. Against the gallery-only baseline, lessons add
+    9.65 KB JS / 2.56 KB gzip and 5.32 KB CSS / 1.01 KB gzip without GSAP.
+[x] Production dependency audit: zero known vulnerabilities in npm audit --omit=dev.
+[x] Local browser QA at 320, 375, 768, 1024 and 1440 px: responsive columns,
+    pointer sorting, direct lesson load, hydration console and back-to-top focus.
+[ ] Complete the keyboard-only pass, browser-emulated reduced motion, failed-image
+    recovery and social-link checks in the deploy preview before launch.
+[ ] User approval to push/merge/deploy new repo; create separate Netlify site.
+[ ] Configure subdomain DNS/TLS only; verify production before portfolio cutover.
+[ ] Configure dedicated Cloudflare token and verify beacon/dashboard.
+[ ] Approve/deploy portfolio cutover branch; verify real 301 and portfolio regressions.
+[ ] Submit both sitemaps; monitor for 14 days after actual cutover.
+[ ] Keep old URL/image redirects for at least one year after actual cutover.

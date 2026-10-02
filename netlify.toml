@@ -1,0 +1,14 @@
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "22"
+
+[context.deploy-preview.environment]
+  SITE_INDEXING = "noindex"
+
+[context.branch-deploy.environment]
+  SITE_INDEXING = "noindex"
+
+# No SPA catch-all. The gallery and four lesson pages are prerendered; unknown paths return real 404s.

@@ -1,0 +1,11 @@
+/* TEAM */
+Author: Mario Caesar
+Portfolio: https://caesarmar.io/
+Contact: hello@caesarmar.io
+
+/* SITE */
+Name: Data Sketch
+URL: https://datasketch.caesarmar.io/
+Language: English
+Built with: React, TypeScript, Vite
+Last update: 2026-10-02
