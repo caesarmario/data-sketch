@@ -33,20 +33,42 @@ function routeImage(route) {
 
 function routeSchema(route) {
   const canonical = absoluteUrl(route.path);
+  const websiteId = `${siteConfig.baseUrl}/#website`;
+  const personId = `${siteConfig.portfolioUrl}/#person`;
+  const website = {
+    '@type': 'WebSite',
+    '@id': websiteId,
+    name: siteConfig.name,
+    url: `${siteConfig.baseUrl}/`,
+    author: { '@id': personId },
+  };
+  const person = {
+    '@type': 'Person',
+    '@id': personId,
+    name: siteConfig.author,
+    url: `${siteConfig.portfolioUrl}/`,
+  };
   if (route.kind === 'gallery') {
     return {
       '@context': 'https://schema.org',
-      '@type': 'CollectionPage',
-      name: route.title,
-      description: route.description,
-      url: canonical,
-      author: { '@type': 'Person', name: siteConfig.author, url: `${siteConfig.portfolioUrl}/` },
-      isPartOf: { '@type': 'WebSite', name: siteConfig.name, url: `${siteConfig.baseUrl}/` },
-      hasPart: routeManifest.filter(entry => entry.kind === 'lesson').map(entry => ({
-        '@type': 'Article',
-        headline: entry.title.replace(' | Data Sketch', ''),
-        url: absoluteUrl(entry.path),
-      })),
+      '@graph': [
+        {
+          '@type': 'CollectionPage',
+          '@id': `${canonical}#collection`,
+          name: route.title,
+          description: route.description,
+          url: canonical,
+          author: { '@id': personId },
+          isPartOf: { '@id': websiteId },
+          hasPart: routeManifest.filter(entry => entry.kind === 'lesson').map(entry => ({
+            '@type': 'Article',
+            headline: entry.title.replace(' | Data Sketch', ''),
+            url: absoluteUrl(entry.path),
+          })),
+        },
+        website,
+        person,
+      ],
     };
   }
 
@@ -61,8 +83,8 @@ function routeSchema(route) {
         url: canonical,
         mainEntityOfPage: canonical,
         image: routeImage(route).url,
-        author: { '@type': 'Person', name: siteConfig.author, url: `${siteConfig.portfolioUrl}/` },
-        isPartOf: { '@type': 'WebSite', name: siteConfig.name, url: `${siteConfig.baseUrl}/` },
+        author: { '@id': personId },
+        isPartOf: { '@id': websiteId },
       },
       {
         '@type': 'BreadcrumbList',
@@ -71,6 +93,8 @@ function routeSchema(route) {
           { '@type': 'ListItem', position: 2, name: headline, item: canonical },
         ],
       },
+      website,
+      person,
     ],
   };
 }
@@ -86,11 +110,13 @@ export function renderHead({ route = rootRoute, preview = true, analyticsToken =
     ['name', 'theme-color', siteConfig.themeColor], ['property', 'og:type', route.kind === 'lesson' ? 'article' : 'website'],
     ['property', 'og:title', route.title], ['property', 'og:description', route.description],
     ['property', 'og:url', canonical], ['property', 'og:site_name', siteConfig.name],
+    ['property', 'og:locale', 'en_US'],
     ['property', 'og:image', image.url], ['property', 'og:image:width', image.width],
     ['property', 'og:image:height', image.height], ['property', 'og:image:alt', image.alt],
     ['property', 'og:image:type', image.type], ['name', 'twitter:card', 'summary_large_image'],
     ['name', 'twitter:title', route.title], ['name', 'twitter:description', route.description],
     ['name', 'twitter:image', image.url], ['name', 'twitter:image:alt', image.alt],
+    ['name', 'twitter:creator', siteConfig.twitterHandle],
   ];
   const tags = [
     `<title>${escapeHtml(route.title)}</title>`,

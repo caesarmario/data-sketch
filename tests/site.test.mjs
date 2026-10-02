@@ -104,6 +104,9 @@ test('metadata, schema, sitemap and text endpoints are route-aware and source-sa
     assert.ok(head.includes(`content="${route.title}"`));
     assert.ok(head.includes('content="index, follow"'));
     assert.equal((head.match(/application\/ld\+json/g) ?? []).length, 1);
+    assert.ok(head.includes('"@type":"WebSite"'));
+    assert.ok(head.includes('"@type":"Person"'));
+    assert.ok(head.includes('content="@caesarmario_"'));
     if (route.kind === 'lesson') {
       assert.ok(head.includes('"@type":"Article"'));
       assert.ok(head.includes('"@type":"BreadcrumbList"'));

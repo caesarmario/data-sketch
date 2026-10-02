@@ -26,7 +26,7 @@ export const routeManifest = Object.freeze([
     kind: 'gallery',
     path: '/',
     output: 'index.html',
-    title: 'Data Sketch | Practical Data Engineering Lessons by Mario Caesar',
+    title: 'Data Sketch | Data Engineering Lessons by Mario Caesar',
     description: 'Visual notes on data pipelines, SQL, warehouses, and data quality, drawn from Mario Caesar\'s work in data engineering.',
   },
   {
