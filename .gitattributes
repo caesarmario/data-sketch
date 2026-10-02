@@ -1,0 +1,5 @@
+public/404.html text eol=lf
+public/_headers text eol=lf
+public/_redirects text eol=lf
+public/*.txt text eol=lf
+public/*.xml text eol=lf
