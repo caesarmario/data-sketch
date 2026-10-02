@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <rect width="1200" height="630" fill="#0a0a0a"/>
+  <rect x="0" width="10" height="630" fill="#00e677"/>
+  <path d="M70 140h1060M70 550h1060" stroke="#303030"/>
+  <g fill="#00e677"><path d="M74 57h7v46h-7zM88 57h7v27h-7zM102 70h7v33h-7zM116 57h7v46h-7zM130 57h7v20h-7zM88 94h7v9h-7zM102 57h7v7h-7z"/></g>
+  <text x="158" y="96" fill="#fff" font-family="sans-serif" font-size="38" font-weight="700" letter-spacing="4">DATA SKETCH</text>
+  <text x="72" y="220" fill="#aaa" font-family="sans-serif" font-size="18" letter-spacing="3">VISUAL NOTES BY MARIO CAESAR</text>
+  <text x="68" y="323" fill="#fff" font-family="sans-serif" font-size="72" font-weight="700" letter-spacing="-2">One diagram.</text>
+  <text x="68" y="409" fill="#00e677" font-family="sans-serif" font-size="72" font-weight="700" letter-spacing="-2">One practical lesson.</text>
+  <text x="72" y="480" fill="#bdbdbd" font-family="sans-serif" font-size="24">Pipelines. SQL. Warehouses. Lessons from the work.</text>
+  <text x="72" y="595" fill="#bdbdbd" font-family="sans-serif" font-size="20">datasketch.caesarmar.io</text>
+  <path d="M892 83h65l30-28h80m-80 0v51h55" fill="none" stroke="#00e677" stroke-width="2"/>
+  <g fill="#0a0a0a" stroke="#00e677" stroke-width="2"><circle cx="892" cy="83" r="5"/><circle cx="987" cy="55" r="5"/><circle cx="1067" cy="55" r="5"/><circle cx="1042" cy="106" r="5"/></g>
+</svg>
