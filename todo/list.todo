@@ -37,3 +37,23 @@ Updated: 2026-10-02
 [ ] Approve/deploy portfolio cutover branch; verify real 301 and portfolio regressions.
 [ ] Submit both sitemaps; monitor for 14 days after actual cutover.
 [ ] Keep old URL/image redirects for at least one year after actual cutover.
+
+SEO / AGENT READINESS HARDENING - 2026-10-07
+--------------------------------------------
+
+[x] Version 1.0.1 / build v2026.10.07 prepared locally.
+[x] Route-level dependency lastmod replaces the single global sitemap date.
+[x] Gallery and lesson schema use stable IDs, inLanguage, dateModified, image
+    objects, and source-backed category/tags; no daily datePublished is invented.
+[x] Sitemap includes the four published diagram images and excludes Markdown.
+[x] llms.txt follows H1 + blockquote + linked H2 sections and points to generated
+    Markdown sources for the gallery and four lessons.
+[x] Every public HTML page exposes describedby and Markdown alternate links.
+    Markdown responses are noindex, canonicalized, and served as text/markdown.
+[x] Typecheck, lint, build, 10 tests, seo:check, HTTP dev/preview smoke tests,
+    and responsive browser checks at 320, 375, 768, 1024, and 1440 px pass.
+[ ] Disable the Powered by Netlify badge in the linked Netlify project settings;
+    this is a hosting setting and is intentionally not represented in source.
+[ ] Rerun the agentic HTTP audit against production after deployment because
+    the local SEO safety layer refuses localhost targets.
+[ ] Push/merge/deploy remain blocked until a separate explicit instruction.

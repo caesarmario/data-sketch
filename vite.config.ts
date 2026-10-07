@@ -17,7 +17,23 @@ function routeGuard(base: string, dev: boolean): Connect.NextHandleFunction {
     if (alias) {
       res.writeHead(301, { Location: alias, 'Cache-Control': 'no-store' }); res.end(); return;
     }
-    if (findRoute(pathname)) { next(); return; }
+    const route = findRoute(pathname);
+    if (route) {
+      const canonical = `${siteConfig.baseUrl}${route.path}`;
+      res.setHeader('Link', `<${canonical}>; rel="canonical", <${siteConfig.baseUrl}/llms.txt>; rel="describedby"; type="text/markdown", <${siteConfig.baseUrl}${route.markdownPath}>; rel="alternate"; type="text/markdown"`);
+      next();
+      return;
+    }
+    const markdownRoute = routeManifest.find(entry => entry.markdownPath === pathname);
+    if (markdownRoute) {
+      res.setHeader('Content-Type', 'text/markdown; charset=utf-8');
+      res.setHeader('X-Robots-Tag', 'noindex, follow');
+      res.setHeader('Link', `<${siteConfig.baseUrl}${markdownRoute.path}>; rel="canonical", <${siteConfig.baseUrl}/llms.txt>; rel="describedby"; type="text/markdown"`);
+      next();
+      return;
+    }
+    if (pathname === '/llms.txt') res.setHeader('Content-Type', 'text/markdown; charset=utf-8');
+    if (pathname === '/humans.txt') res.setHeader('Content-Type', 'text/plain; charset=utf-8');
     let localPath: string;
     try { localPath = path.resolve(base, '.' + decodeURIComponent(pathname)); }
     catch { res.statusCode = 400; res.end('Bad request'); return; }

@@ -7,6 +7,15 @@
 - Edit public copy through anti-slop-writing, humanizer and stop-slop in that order. Preserve technical terms, source meaning and honest uncertainty; never invent incidents, metrics, dates or platform behavior to make a lesson sound specific.
 - Preserve prerender/hydration parity. Do not hide initial content behind JavaScript or entrance animations. Follow prefers-reduced-motion and use CSS for lightweight motion.
 - Canonical, sitemap, OG identity and analytics belong to datasketch.caesarmar.io, never the root portfolio. Author/social links may point to caesarmar.io.
+- Compute sitemap and schema `dateModified` from each route's declared content
+  and asset dependencies. Keep published diagram images discoverable through
+  image sitemap entries and ImageObject schema.
+- Generate llms.txt and each Markdown page from the same episode data used by
+  the UI. HTML pages must expose `rel=describedby` and a Markdown alternate;
+  Markdown stays out of sitemap and uses noindex plus canonical Link headers.
+- Treat llms.txt as a curated source index, not a ranking promise. Do not add
+  llms-full.txt, Content-Signal, WebMCP, AI catalogs, agent cards, or named AI
+  crawler groups without a concrete product or API need.
 - Never copy credentials, .env files, Supabase or resume flows from the portfolio.
 - Keep preview noindex and actual unknown-path 404. Social links use fixed absolute portfolio handoff URLs.
 - No push/deploy/DNS changes without explicit user approval. Portfolio cutover must wait for verified subdomain production.

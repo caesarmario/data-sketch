@@ -8,4 +8,6 @@ Name: Data Sketch
 URL: https://datasketch.caesarmar.io/
 Language: English
 Built with: React, TypeScript, Vite
-Last update: 2026-10-02
+Version: 1.0.1
+Build: v2026.10.07
+Last update: 2026-10-07

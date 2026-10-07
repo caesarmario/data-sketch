@@ -1,15 +1,17 @@
 # Data Sketch
 
-> Visual notes by Mario Caesar about practical data engineering work.
+> Practical visual lessons about data pipelines, SQL, warehouses, and data quality by Mario Caesar.
 
-## Published lessons
+Canonical site: https://datasketch.caesarmar.io/. Use the lesson sources below for factual summaries. Upcoming episodes are not published sources.
 
-- [Backfill Playbook: From Request to Release](https://datasketch.caesarmar.io/sketches/backfill-playbook/): A five-stage backfill workflow covering scope, strategy, partitioned runs, validation gates, and atomic publishing.
-- [Join Duplication Debugging Workflow](https://datasketch.caesarmar.io/sketches/join-duplication-debugging/): Steps for tracing inflated metrics through row counts, join keys, table grain, join type, and null behavior.
-- [Full Refresh vs Incremental Load](https://datasketch.caesarmar.io/sketches/full-refresh-vs-incremental-load/): A comparison of full refresh and incremental loading across data volume, refresh cost, watermarks, late updates, and upserts.
-- [Bronze, Silver, and Gold Data Layers](https://datasketch.caesarmar.io/sketches/bronze-silver-gold/): An overview of how Bronze, Silver, and Gold layers move data from raw ingestion through cleaning and standardization to business-ready datasets.
+## Primary pages
 
-## Author
+- [Data Sketch gallery](https://datasketch.caesarmar.io/index.md): Published lesson index and original source links.
+- [Backfill Playbook: From Request to Release](https://datasketch.caesarmar.io/sketches/backfill-playbook/index.md): A five-stage backfill workflow covering scope, strategy, partitioned runs, validation gates, and atomic publishing.
+- [Join Duplication Debugging Workflow](https://datasketch.caesarmar.io/sketches/join-duplication-debugging/index.md): Steps for tracing inflated metrics through row counts, join keys, table grain, join type, and null behavior.
+- [Full Refresh vs Incremental Load](https://datasketch.caesarmar.io/sketches/full-refresh-vs-incremental-load/index.md): A comparison of full refresh and incremental loading across data volume, refresh cost, watermarks, late updates, and upserts.
+- [Bronze, Silver, and Gold Data Layers](https://datasketch.caesarmar.io/sketches/bronze-silver-gold/index.md): An overview of how Bronze, Silver, and Gold layers move data from raw ingestion through cleaning and standardization to business-ready datasets.
 
-- [Mario Caesar](https://caesarmar.io/)
-- [Data Sketch gallery](https://datasketch.caesarmar.io/)
+## Author source
+
+- [Mario Caesar portfolio](https://caesarmar.io/index.md): Public professional background and attribution source.

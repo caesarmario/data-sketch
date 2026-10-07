@@ -23,6 +23,8 @@ for (const route of routeManifest) {
   await fs.writeFile(output, html);
 }
 for (const [name, content] of Object.entries(generateFiles({ preview }))) {
-  await fs.writeFile(new URL(`../dist/${name}`, import.meta.url), content);
+  const output = path.join(root, 'dist', name);
+  await fs.mkdir(path.dirname(output), { recursive: true });
+  await fs.writeFile(output, content);
 }
 console.log(`Prerendered ${routeManifest.length} public pages; indexing: ${preview ? 'disabled (preview)' : 'production'}.`);

@@ -2,11 +2,16 @@ import assert from 'node:assert/strict';
 import { routeAliases, routeManifest } from '../site.routes.mjs';
 
 for (const base of [process.env.DATA_SKETCH_DEV_URL ?? 'http://127.0.0.1:8081', process.env.DATA_SKETCH_PREVIEW_URL ?? 'http://127.0.0.1:4181']) {
-  for (const route of [...routeManifest.map(entry => entry.path), ...['01', '02', '03', '04'].map(n => `/images/data-sketch/data-sketch-episode-${n}.jpg`), '/favicon.svg', '/favicon-32x32.png', '/brand/data-sketch-wordmark.png', '/og-image.png', '/sitemap.xml', '/robots.txt', '/humans.txt', '/llms.txt']) {
+  for (const route of [...routeManifest.map(entry => entry.path), ...routeManifest.map(entry => entry.markdownPath), ...['01', '02', '03', '04'].map(n => `/images/data-sketch/data-sketch-episode-${n}.jpg`), '/favicon.svg', '/favicon-32x32.png', '/brand/data-sketch-wordmark.png', '/og-image.png', '/sitemap.xml', '/robots.txt', '/humans.txt', '/llms.txt']) {
     const response = await fetch(base + route);
     assert.equal(response.status, 200, `${base}${route}`);
     if (route.endsWith('.jpg')) assert.ok(response.headers.get('content-type')?.startsWith('image/jpeg'));
-    if (route.endsWith('.txt')) assert.ok(response.headers.get('content-type')?.startsWith('text/plain'));
+    if (route === '/humans.txt') assert.ok(response.headers.get('content-type')?.startsWith('text/plain'));
+    if (route === '/llms.txt' || route.endsWith('.md')) assert.ok(response.headers.get('content-type')?.startsWith('text/markdown'));
+    if (route.endsWith('.md')) {
+      assert.equal(response.headers.get('x-robots-tag'), 'noindex, follow');
+      assert.ok(response.headers.get('link')?.includes('rel="canonical"'));
+    }
     await response.arrayBuffer();
   }
   for (const [alias, canonical] of routeAliases) {

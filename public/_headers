@@ -5,6 +5,46 @@
   Permissions-Policy: camera=(), microphone=(), geolocation=()
   Strict-Transport-Security: max-age=31536000
 
+/
+  Link: <https://datasketch.caesarmar.io/>; rel="canonical", <https://datasketch.caesarmar.io/llms.txt>; rel="describedby"; type="text/markdown", <https://datasketch.caesarmar.io/index.md>; rel="alternate"; type="text/markdown"
+
+/index.md
+  Content-Type: text/markdown; charset=utf-8
+  X-Robots-Tag: noindex, follow
+  Link: <https://datasketch.caesarmar.io/>; rel="canonical", <https://datasketch.caesarmar.io/llms.txt>; rel="describedby"; type="text/markdown"
+
+/sketches/backfill-playbook/
+  Link: <https://datasketch.caesarmar.io/sketches/backfill-playbook/>; rel="canonical", <https://datasketch.caesarmar.io/llms.txt>; rel="describedby"; type="text/markdown", <https://datasketch.caesarmar.io/sketches/backfill-playbook/index.md>; rel="alternate"; type="text/markdown"
+
+/sketches/backfill-playbook/index.md
+  Content-Type: text/markdown; charset=utf-8
+  X-Robots-Tag: noindex, follow
+  Link: <https://datasketch.caesarmar.io/sketches/backfill-playbook/>; rel="canonical", <https://datasketch.caesarmar.io/llms.txt>; rel="describedby"; type="text/markdown"
+
+/sketches/join-duplication-debugging/
+  Link: <https://datasketch.caesarmar.io/sketches/join-duplication-debugging/>; rel="canonical", <https://datasketch.caesarmar.io/llms.txt>; rel="describedby"; type="text/markdown", <https://datasketch.caesarmar.io/sketches/join-duplication-debugging/index.md>; rel="alternate"; type="text/markdown"
+
+/sketches/join-duplication-debugging/index.md
+  Content-Type: text/markdown; charset=utf-8
+  X-Robots-Tag: noindex, follow
+  Link: <https://datasketch.caesarmar.io/sketches/join-duplication-debugging/>; rel="canonical", <https://datasketch.caesarmar.io/llms.txt>; rel="describedby"; type="text/markdown"
+
+/sketches/full-refresh-vs-incremental-load/
+  Link: <https://datasketch.caesarmar.io/sketches/full-refresh-vs-incremental-load/>; rel="canonical", <https://datasketch.caesarmar.io/llms.txt>; rel="describedby"; type="text/markdown", <https://datasketch.caesarmar.io/sketches/full-refresh-vs-incremental-load/index.md>; rel="alternate"; type="text/markdown"
+
+/sketches/full-refresh-vs-incremental-load/index.md
+  Content-Type: text/markdown; charset=utf-8
+  X-Robots-Tag: noindex, follow
+  Link: <https://datasketch.caesarmar.io/sketches/full-refresh-vs-incremental-load/>; rel="canonical", <https://datasketch.caesarmar.io/llms.txt>; rel="describedby"; type="text/markdown"
+
+/sketches/bronze-silver-gold/
+  Link: <https://datasketch.caesarmar.io/sketches/bronze-silver-gold/>; rel="canonical", <https://datasketch.caesarmar.io/llms.txt>; rel="describedby"; type="text/markdown", <https://datasketch.caesarmar.io/sketches/bronze-silver-gold/index.md>; rel="alternate"; type="text/markdown"
+
+/sketches/bronze-silver-gold/index.md
+  Content-Type: text/markdown; charset=utf-8
+  X-Robots-Tag: noindex, follow
+  Link: <https://datasketch.caesarmar.io/sketches/bronze-silver-gold/>; rel="canonical", <https://datasketch.caesarmar.io/llms.txt>; rel="describedby"; type="text/markdown"
+
 /assets/*
   Cache-Control: public, max-age=31536000, immutable
 
@@ -25,7 +65,8 @@
   Content-Type: text/plain; charset=utf-8
 
 /llms.txt
-  Content-Type: text/plain; charset=utf-8
+  Content-Type: text/markdown; charset=utf-8
+  Link: <https://datasketch.caesarmar.io/>; rel="canonical"
 
 /404.html
   X-Robots-Tag: noindex, nofollow

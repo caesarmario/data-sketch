@@ -10,7 +10,7 @@ import { routeAliases, routeManifest } from '../site.routes.mjs';
 let server;
 let data;
 before(async () => {
-  server = await createServer({ server: { middlewareMode: true }, appType: 'custom' });
+  server = await createServer({ server: { middlewareMode: true, hmr: false }, appType: 'custom' });
   data = await server.ssrLoadModule('/src/data/sketches.ts');
 });
 after(async () => { await server?.close(); });
@@ -101,6 +101,8 @@ test('metadata, schema, sitemap and text endpoints are route-aware and source-sa
   for (const route of routeManifest) {
     const head = renderHead({ route, preview: false });
     assert.ok(head.includes(`<link rel="canonical" href="${siteConfig.baseUrl}${route.path}"`));
+    assert.ok(head.includes('rel="describedby"'));
+    assert.ok(head.includes(`rel="alternate" type="text/markdown" href="${siteConfig.baseUrl}${route.markdownPath}"`));
     assert.ok(head.includes(`content="${route.title}"`));
     assert.ok(head.includes('content="index, follow"'));
     assert.equal((head.match(/application\/ld\+json/g) ?? []).length, 1);
@@ -110,6 +112,10 @@ test('metadata, schema, sitemap and text endpoints are route-aware and source-sa
     if (route.kind === 'lesson') {
       assert.ok(head.includes('"@type":"Article"'));
       assert.ok(head.includes('"@type":"BreadcrumbList"'));
+      assert.ok(head.includes('"@type":"ImageObject"'));
+      assert.ok(head.includes('"articleSection"'));
+      assert.ok(head.includes('"keywords"'));
+      assert.ok(head.includes('"dateModified"'));
       assert.ok(!head.includes('datePublished'));
     } else {
       assert.ok(head.includes('"@type":"CollectionPage"'));
@@ -117,14 +123,23 @@ test('metadata, schema, sitemap and text endpoints are route-aware and source-sa
   }
   const files = generateFiles();
   assert.equal((files['sitemap.xml'].match(/<loc>/g) ?? []).length, 5);
+  assert.ok(files['sitemap.xml'].includes('xmlns:image='));
+  assert.equal((files['sitemap.xml'].match(/<image:image>/g) ?? []).length, 8);
   for (const route of routeManifest) assert.ok(files['sitemap.xml'].includes(`${siteConfig.baseUrl}${route.path}`));
   assert.ok(!files['sitemap.xml'].includes('episode-05'));
   assert.ok(!files['sitemap.xml'].includes('humans.txt'));
   assert.ok(!files['sitemap.xml'].includes('llms.txt'));
   assert.ok(files['humans.txt'].includes('Author: Mario Caesar'));
-  assert.equal((files['llms.txt'].match(/^-/gm) ?? []).length, 6);
+  assert.match(files['llms.txt'], /^# Data Sketch\n\n> /);
+  assert.ok(files['llms.txt'].includes('/index.md'));
   assert.ok(files['_headers'].includes('/humans.txt'));
   assert.ok(files['_headers'].includes('/llms.txt'));
+  assert.ok(files['_headers'].includes('Content-Type: text/markdown; charset=utf-8'));
+  assert.ok(files['_headers'].includes('X-Robots-Tag: noindex, follow'));
+  for (const route of routeManifest) {
+    assert.ok(files[route.markdownOutput]);
+    assert.ok(files[route.markdownOutput].includes(`Canonical page: ${siteConfig.baseUrl}${route.path}`));
+  }
   assert.ok(files['_redirects'].includes('/* /404.html 404'));
   assert.ok(!files['_redirects'].includes(' 200'));
   for (const route of routeManifest.filter(entry => entry.kind === 'lesson')) {
@@ -137,8 +152,8 @@ test('metadata, schema, sitemap and text endpoints are route-aware and source-sa
 test('shared utilities expose the configured build and accessible controls', async () => {
   const { render } = await server.ssrLoadModule('/src/entry-server.tsx');
   const html = render('/');
-  assert.equal(siteConfig.version, '1.0.0');
-  assert.equal(siteConfig.buildVersion, 'v2026.10.02');
+  assert.equal(siteConfig.version, '1.0.1');
+  assert.equal(siteConfig.buildVersion, 'v2026.10.07');
   assert.ok(html.includes('aria-label="Site information"'));
   assert.ok(html.includes('href="/humans.txt"'));
   assert.ok(html.includes('href="/llms.txt"'));
@@ -199,4 +214,5 @@ test('production build contains all five hydrated pages and public support files
   for (const file of ['favicon.svg', 'favicon-32x32.png', 'apple-touch-icon.png', 'og-image.png', 'humans.txt', 'llms.txt']) {
     assert.ok(fs.existsSync(`dist/${file}`));
   }
+  for (const route of routeManifest) assert.ok(fs.existsSync(`dist/${route.markdownOutput}`));
 });

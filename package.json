@@ -1,6 +1,6 @@
 {
   "name": "data-sketch",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "private": true,
   "type": "module",
   "description": "Visual data engineering lessons by Mario Caesar",
@@ -8,8 +8,11 @@
   "license": "UNLICENSED",
   "engines": { "node": ">=22" },
   "scripts": {
+    "predev": "npm run seo:generate",
     "dev": "vite --port 8081",
+    "prebuild": "npm run seo:generate",
     "build": "node scripts/build.mjs",
+    "prepreview": "npm run seo:generate",
     "preview": "vite preview --port 4181",
     "typecheck": "tsc --noEmit",
     "lint": "eslint .",

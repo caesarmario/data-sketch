@@ -4,6 +4,9 @@ export type GalleryRoute = {
   output: 'index.html';
   title: string;
   description: string;
+  markdownPath: string;
+  markdownOutput: string;
+  lastmodFiles: readonly string[];
 };
 
 export type LessonRoute = {
@@ -14,6 +17,9 @@ export type LessonRoute = {
   episodeId: number;
   title: string;
   description: string;
+  markdownPath: string;
+  markdownOutput: string;
+  lastmodFiles: readonly string[];
 };
 
 export type SiteRoute = GalleryRoute | LessonRoute;
