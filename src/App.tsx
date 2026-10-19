@@ -60,7 +60,7 @@ function GalleryPage() {
         <div className="hero-copy">
           <p className="eyebrow">Visual notes by Mario Caesar</p>
           <h1 id="hero-heading" data-lcp-candidate="data-sketch-intro">One diagram.<br /><span>One practical lesson.</span></h1>
-          <p className="hero-intro">Visual notes on pipelines, SQL, warehouses, and data quality from my work in data engineering.</p>
+          <p className="hero-intro">{siteConfig.intro}</p>
         </div>
         <div className="hero-aside">
           <p className="episode-count"><span>{published} published</span><span aria-hidden="true"> · </span><span>{sketches.length - published} upcoming</span></p>

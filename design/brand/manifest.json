@@ -1,0 +1,43 @@
+{
+  "sources": {
+    "logo": {
+      "file": "favicon-source.png",
+      "width": 1000,
+      "height": 1000,
+      "sha256": "063b16fef8e661ea372c8bbd5ae665db6f23ded994a4f643d83759897611c860"
+    },
+    "og": {
+      "file": "og-image-source.png",
+      "width": 1200,
+      "height": 630,
+      "sha256": "3a1a6cb36a2faa44ccb06477b033b520e0cff1ca2c3aee5ca9f608ea3fa02abc"
+    }
+  },
+  "favicon": {
+    "crop": {
+      "left": 157,
+      "top": 277,
+      "width": 685,
+      "height": 446
+    },
+    "masterSize": 512,
+    "outerPadding": 20,
+    "icoSizes": [
+      16,
+      32,
+      48
+    ],
+    "pngSizes": [
+      16,
+      32,
+      96
+    ],
+    "appleTouchSize": 180
+  },
+  "og": {
+    "width": 1200,
+    "height": 630,
+    "sha256": "1107dd8bb304fbad20734f92cb07fe594855981712fd60e9eb87cd5afcd56b74",
+    "rgbaSha256": "aaae93172b6f9a9685ab46ee207c20175970719384b577ea5d1401a9b18c98d3"
+  }
+}

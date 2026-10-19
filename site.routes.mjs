@@ -1,4 +1,5 @@
 // @ts-check
+import { siteConfig } from './site.config.mjs';
 
 /**
  * @typedef {object} GalleryRoute
@@ -9,7 +10,6 @@
  * @property {string} description
  * @property {string} markdownPath
  * @property {string} markdownOutput
- * @property {readonly string[]} lastmodFiles
  *
  * @typedef {object} LessonRoute
  * @property {'lesson'} kind
@@ -21,7 +21,6 @@
  * @property {string} description
  * @property {string} markdownPath
  * @property {string} markdownOutput
- * @property {readonly string[]} lastmodFiles
  *
  * @typedef {GalleryRoute | LessonRoute} SiteRoute
  */
@@ -34,17 +33,8 @@ export const routeManifest = Object.freeze([
     output: 'index.html',
     markdownPath: '/index.md',
     markdownOutput: 'index.md',
-    title: 'Data Sketch | Data Engineering Lessons by Mario Caesar',
-    description: 'Visual notes on data pipelines, SQL, warehouses, and data quality, drawn from Mario Caesar\'s work in data engineering.',
-    lastmodFiles: [
-      'src/App.tsx',
-      'src/data/sketches.ts',
-      'public/og-image.png',
-      'public/images/data-sketch/data-sketch-episode-01.jpg',
-      'public/images/data-sketch/data-sketch-episode-02.jpg',
-      'public/images/data-sketch/data-sketch-episode-03.jpg',
-      'public/images/data-sketch/data-sketch-episode-04.jpg',
-    ],
+    title: siteConfig.title,
+    description: siteConfig.description,
   },
   {
     kind: 'lesson',
@@ -56,7 +46,6 @@ export const routeManifest = Object.freeze([
     episodeId: 1,
     title: 'Backfill Playbook: From Request to Release | Data Sketch',
     description: 'A five-stage backfill workflow covering scope, strategy, partitioned runs, validation gates, and atomic publishing.',
-    lastmodFiles: ['src/data/sketches.ts', 'src/App.tsx', 'public/images/data-sketch/data-sketch-episode-01.jpg'],
   },
   {
     kind: 'lesson',
@@ -68,7 +57,6 @@ export const routeManifest = Object.freeze([
     episodeId: 2,
     title: 'Join Duplication Debugging Workflow | Data Sketch',
     description: 'Steps for tracing inflated metrics through row counts, join keys, table grain, join type, and null behavior.',
-    lastmodFiles: ['src/data/sketches.ts', 'src/App.tsx', 'public/images/data-sketch/data-sketch-episode-02.jpg'],
   },
   {
     kind: 'lesson',
@@ -80,7 +68,6 @@ export const routeManifest = Object.freeze([
     episodeId: 3,
     title: 'Full Refresh vs Incremental Load | Data Sketch',
     description: 'A comparison of full refresh and incremental loading across data volume, refresh cost, watermarks, late updates, and upserts.',
-    lastmodFiles: ['src/data/sketches.ts', 'src/App.tsx', 'public/images/data-sketch/data-sketch-episode-03.jpg'],
   },
   {
     kind: 'lesson',
@@ -92,7 +79,61 @@ export const routeManifest = Object.freeze([
     episodeId: 4,
     title: 'Bronze, Silver, and Gold Data Layers | Data Sketch',
     description: 'An overview of how Bronze, Silver, and Gold layers move data from raw ingestion through cleaning and standardization to business-ready datasets.',
-    lastmodFiles: ['src/data/sketches.ts', 'src/App.tsx', 'public/images/data-sketch/data-sketch-episode-04.jpg'],
+  },
+  {
+    kind: 'lesson',
+    path: '/sketches/safe-publish-pattern/',
+    output: 'sketches/safe-publish-pattern/index.html',
+    markdownPath: '/sketches/safe-publish-pattern/index.md',
+    markdownOutput: 'sketches/safe-publish-pattern/index.md',
+    slug: 'safe-publish-pattern',
+    episodeId: 5,
+    title: 'Safe Publish Pattern Flow | Data Sketch',
+    description: 'A staging-first publish flow covering validation checks, a failure gate, atomic publishing where supported, and monitoring after release.',
+  },
+  {
+    kind: 'lesson',
+    path: '/sketches/reconciliation-workflow/',
+    output: 'sketches/reconciliation-workflow/index.html',
+    markdownPath: '/sketches/reconciliation-workflow/index.md',
+    markdownOutput: 'sketches/reconciliation-workflow/index.md',
+    slug: 'reconciliation-workflow',
+    episodeId: 6,
+    title: 'A Simple Reconciliation Workflow | Data Sketch',
+    description: 'Trace source and target count differences through date ranges, filters, grain, keys, pipeline stages, and late updates.',
+  },
+  {
+    kind: 'lesson',
+    path: '/sketches/late-arriving-data/',
+    output: 'sketches/late-arriving-data/index.html',
+    markdownPath: '/sketches/late-arriving-data/index.md',
+    markdownOutput: 'sketches/late-arriving-data/index.md',
+    slug: 'late-arriving-data',
+    episodeId: 7,
+    title: 'Late-Arriving Data | Data Sketch',
+    description: 'Five causes of late-arriving data: historical edits, backdated transactions, batch uploads, API or network lag, and delayed source systems.',
+  },
+  {
+    kind: 'lesson',
+    path: '/sketches/data-freshness/',
+    output: 'sketches/data-freshness/index.html',
+    markdownPath: '/sketches/data-freshness/index.md',
+    markdownOutput: 'sketches/data-freshness/index.md',
+    slug: 'data-freshness',
+    episodeId: 8,
+    title: 'Data Freshness | Data Sketch',
+    description: 'Check timestamps, expected partitions, row volume, source delays, and the freshness SLA before treating a successful pipeline run as ready.',
+  },
+  {
+    kind: 'lesson',
+    path: '/sketches/partitioning/',
+    output: 'sketches/partitioning/index.html',
+    markdownPath: '/sketches/partitioning/index.md',
+    markdownOutput: 'sketches/partitioning/index.md',
+    slug: 'partitioning',
+    episodeId: 9,
+    title: 'Partitioning: Why Scanning Less Data Matters | Data Sketch',
+    description: 'How partitioning can reduce scanning work when a query skips irrelevant partitions, and why runtime and cost benefits depend on the workload.',
   },
 ]);
 

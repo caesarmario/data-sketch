@@ -45,6 +45,46 @@
   X-Robots-Tag: noindex, follow
   Link: <https://datasketch.caesarmar.io/sketches/bronze-silver-gold/>; rel="canonical", <https://datasketch.caesarmar.io/llms.txt>; rel="describedby"; type="text/markdown"
 
+/sketches/safe-publish-pattern/
+  Link: <https://datasketch.caesarmar.io/sketches/safe-publish-pattern/>; rel="canonical", <https://datasketch.caesarmar.io/llms.txt>; rel="describedby"; type="text/markdown", <https://datasketch.caesarmar.io/sketches/safe-publish-pattern/index.md>; rel="alternate"; type="text/markdown"
+
+/sketches/safe-publish-pattern/index.md
+  Content-Type: text/markdown; charset=utf-8
+  X-Robots-Tag: noindex, follow
+  Link: <https://datasketch.caesarmar.io/sketches/safe-publish-pattern/>; rel="canonical", <https://datasketch.caesarmar.io/llms.txt>; rel="describedby"; type="text/markdown"
+
+/sketches/reconciliation-workflow/
+  Link: <https://datasketch.caesarmar.io/sketches/reconciliation-workflow/>; rel="canonical", <https://datasketch.caesarmar.io/llms.txt>; rel="describedby"; type="text/markdown", <https://datasketch.caesarmar.io/sketches/reconciliation-workflow/index.md>; rel="alternate"; type="text/markdown"
+
+/sketches/reconciliation-workflow/index.md
+  Content-Type: text/markdown; charset=utf-8
+  X-Robots-Tag: noindex, follow
+  Link: <https://datasketch.caesarmar.io/sketches/reconciliation-workflow/>; rel="canonical", <https://datasketch.caesarmar.io/llms.txt>; rel="describedby"; type="text/markdown"
+
+/sketches/late-arriving-data/
+  Link: <https://datasketch.caesarmar.io/sketches/late-arriving-data/>; rel="canonical", <https://datasketch.caesarmar.io/llms.txt>; rel="describedby"; type="text/markdown", <https://datasketch.caesarmar.io/sketches/late-arriving-data/index.md>; rel="alternate"; type="text/markdown"
+
+/sketches/late-arriving-data/index.md
+  Content-Type: text/markdown; charset=utf-8
+  X-Robots-Tag: noindex, follow
+  Link: <https://datasketch.caesarmar.io/sketches/late-arriving-data/>; rel="canonical", <https://datasketch.caesarmar.io/llms.txt>; rel="describedby"; type="text/markdown"
+
+/sketches/data-freshness/
+  Link: <https://datasketch.caesarmar.io/sketches/data-freshness/>; rel="canonical", <https://datasketch.caesarmar.io/llms.txt>; rel="describedby"; type="text/markdown", <https://datasketch.caesarmar.io/sketches/data-freshness/index.md>; rel="alternate"; type="text/markdown"
+
+/sketches/data-freshness/index.md
+  Content-Type: text/markdown; charset=utf-8
+  X-Robots-Tag: noindex, follow
+  Link: <https://datasketch.caesarmar.io/sketches/data-freshness/>; rel="canonical", <https://datasketch.caesarmar.io/llms.txt>; rel="describedby"; type="text/markdown"
+
+/sketches/partitioning/
+  Link: <https://datasketch.caesarmar.io/sketches/partitioning/>; rel="canonical", <https://datasketch.caesarmar.io/llms.txt>; rel="describedby"; type="text/markdown", <https://datasketch.caesarmar.io/sketches/partitioning/index.md>; rel="alternate"; type="text/markdown"
+
+/sketches/partitioning/index.md
+  Content-Type: text/markdown; charset=utf-8
+  X-Robots-Tag: noindex, follow
+  Link: <https://datasketch.caesarmar.io/sketches/partitioning/>; rel="canonical", <https://datasketch.caesarmar.io/llms.txt>; rel="describedby"; type="text/markdown"
+
 /assets/*
   Cache-Control: public, max-age=31536000, immutable
 
@@ -56,6 +96,21 @@
 
 /og-image.png
   Cache-Control: public, max-age=3600, must-revalidate
+
+/favicon.ico
+  Cache-Control: public, max-age=0, must-revalidate
+
+/favicon-16x16.png
+  Cache-Control: public, max-age=0, must-revalidate
+
+/favicon-32x32.png
+  Cache-Control: public, max-age=0, must-revalidate
+
+/favicon-96x96.png
+  Cache-Control: public, max-age=0, must-revalidate
+
+/apple-touch-icon.png
+  Cache-Control: public, max-age=0, must-revalidate
 
 /sitemap.xml
   Content-Type: application/xml; charset=utf-8

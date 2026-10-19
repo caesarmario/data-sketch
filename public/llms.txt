@@ -1,6 +1,6 @@
 # Data Sketch
 
-> Practical visual lessons about data pipelines, SQL, warehouses, and data quality by Mario Caesar.
+> Practical data engineering diagrams by Mario Caesar, with short lessons on SQL joins, backfills, data quality checks, and warehouse workflows.
 
 Canonical site: https://datasketch.caesarmar.io/. Use the lesson sources below for factual summaries. Upcoming episodes are not published sources.
 
@@ -11,6 +11,11 @@ Canonical site: https://datasketch.caesarmar.io/. Use the lesson sources below f
 - [Join Duplication Debugging Workflow](https://datasketch.caesarmar.io/sketches/join-duplication-debugging/index.md): Steps for tracing inflated metrics through row counts, join keys, table grain, join type, and null behavior.
 - [Full Refresh vs Incremental Load](https://datasketch.caesarmar.io/sketches/full-refresh-vs-incremental-load/index.md): A comparison of full refresh and incremental loading across data volume, refresh cost, watermarks, late updates, and upserts.
 - [Bronze, Silver, and Gold Data Layers](https://datasketch.caesarmar.io/sketches/bronze-silver-gold/index.md): An overview of how Bronze, Silver, and Gold layers move data from raw ingestion through cleaning and standardization to business-ready datasets.
+- [Safe Publish Pattern Flow](https://datasketch.caesarmar.io/sketches/safe-publish-pattern/index.md): A staging-first publish flow covering validation checks, a failure gate, atomic publishing where supported, and monitoring after release.
+- [A Simple Reconciliation Workflow](https://datasketch.caesarmar.io/sketches/reconciliation-workflow/index.md): Trace source and target count differences through date ranges, filters, grain, keys, pipeline stages, and late updates.
+- [Late-Arriving Data](https://datasketch.caesarmar.io/sketches/late-arriving-data/index.md): Five causes of late-arriving data: historical edits, backdated transactions, batch uploads, API or network lag, and delayed source systems.
+- [Data Freshness](https://datasketch.caesarmar.io/sketches/data-freshness/index.md): Check timestamps, expected partitions, row volume, source delays, and the freshness SLA before treating a successful pipeline run as ready.
+- [Partitioning: Why Scanning Less Data Matters](https://datasketch.caesarmar.io/sketches/partitioning/index.md): How partitioning can reduce scanning work when a query skips irrelevant partitions, and why runtime and cost benefits depend on the workload.
 
 ## Author source
 

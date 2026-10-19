@@ -1,5 +1,13 @@
 # Data Sketch migration runbook
 
+## Current content batch - 2026-10-19
+
+The site is already live at https://datasketch.caesarmar.io/. Version 1.0.2 /
+v2026.10.19 is a local content update with nine published lessons and two teasers,
+not a new migration. The original launch runbook below is retained as history.
+This batch does not authorize portfolio edits, migration checks, Git publication,
+Netlify deployment, or DNS changes. Its release needs separate approval.
+
 ## Release gates (not executed automatically)
 
 1. Review `codex/data-sketch-launch` in the data-sketch repo. Keep the existing portfolio deployment unchanged.
@@ -25,6 +33,6 @@ The user's latest decision explicitly replaces the previous legacy-404 plan with
 
 Keep the last known-good portfolio deploy available (source baseline: `93f1645`). If cutover fails, restore that deploy to serve the original gallery and remove broken redirects. Restore the prior Data Sketch deploy separately when appropriate. A cached 301 may persist in clients, so keep the subdomain available during rollback. Do not reset Git history or modify unrelated routes to recover.
 
-## Versions
+## Original launch versions
 
 Data Sketch remains at 1.0.0 with build marker v2026.10.02 for this launch batch. The portfolio UX and SEO work is prepared separately as 1.8.0 / v1.8.0, while the Data Sketch cutover remains isolated and still requires explicit release approval. Version markers are configured release identifiers, not per-build counters.

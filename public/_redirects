@@ -3,5 +3,10 @@
 /sketches/join-duplication-debugging/index.html /sketches/join-duplication-debugging/ 301!
 /sketches/full-refresh-vs-incremental-load/index.html /sketches/full-refresh-vs-incremental-load/ 301!
 /sketches/bronze-silver-gold/index.html /sketches/bronze-silver-gold/ 301!
+/sketches/safe-publish-pattern/index.html /sketches/safe-publish-pattern/ 301!
+/sketches/reconciliation-workflow/index.html /sketches/reconciliation-workflow/ 301!
+/sketches/late-arriving-data/index.html /sketches/late-arriving-data/ 301!
+/sketches/data-freshness/index.html /sketches/data-freshness/ 301!
+/sketches/partitioning/index.html /sketches/partitioning/ 301!
 /404.html /404.html 404!
 /* /404.html 404

@@ -1,16 +1,22 @@
-import { execFileSync } from 'node:child_process';
-import fs from 'node:fs';
-import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { siteConfig } from '../site.config.mjs';
 import { routeAliases, routeManifest } from '../site.routes.mjs';
 import { loadTypeScriptModule } from './load-typescript-module.mjs';
+import { calculateRouteLastmod } from './content-dates.mjs';
 
 const rootDir = fileURLToPath(new URL('../', import.meta.url));
 const { sketches } = await loadTypeScriptModule(rootDir, 'src/data/sketches.ts');
 const publishedSketches = sketches.filter(sketch => sketch.status === 'published');
 const rootRoute = routeManifest.find(route => route.kind === 'gallery');
 if (!rootRoute) throw new Error('Gallery route is missing from the route manifest');
+
+const faviconLinks = [
+  '<link rel="icon" href="/favicon.ico" type="image/x-icon" sizes="16x16 32x32 48x48" />',
+  '<link rel="icon" href="/favicon-16x16.png" type="image/png" sizes="16x16" />',
+  '<link rel="icon" href="/favicon-32x32.png" type="image/png" sizes="32x32" />',
+  '<link rel="icon" href="/favicon-96x96.png" type="image/png" sizes="96x96" />',
+  '<link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180" />',
+];
 
 export const escapeHtml = value => String(value).replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;').replaceAll("'", '&#39;');
 const escapeXml = escapeHtml;
@@ -23,28 +29,8 @@ export function absoluteUrl(pathname) {
   return `${siteConfig.baseUrl}${pathname === '/' ? '/' : pathname}`;
 }
 
-function runGit(args) {
-  try {
-    return execFileSync('git', args, { cwd: rootDir, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }).trim();
-  } catch {
-    return '';
-  }
-}
-
-function dependencyTimestamp(relativePath) {
-  const filePath = path.resolve(rootDir, relativePath);
-  if (!fs.existsSync(filePath)) return null;
-  const dirty = runGit(['status', '--porcelain', '--', relativePath]);
-  const committed = runGit(['log', '-1', '--format=%cI', '--', relativePath]);
-  const committedTimestamp = committed ? Date.parse(committed) : Number.NaN;
-  if (!dirty && Number.isFinite(committedTimestamp)) return committedTimestamp;
-  return fs.statSync(filePath).mtimeMs;
-}
-
 export function routeLastmod(route) {
-  const timestamps = route.lastmodFiles.map(dependencyTimestamp).filter(Number.isFinite);
-  const latest = timestamps.length ? Math.max(...timestamps) : Date.parse(siteConfig.contentUpdated);
-  return new Date(latest).toISOString();
+  return calculateRouteLastmod(route, sketches, siteConfig.contentUpdated);
 }
 
 function publishedSketchForRoute(route) {
@@ -170,9 +156,7 @@ export function renderHead({ route = rootRoute, preview = true, analyticsToken =
     `<link rel="canonical" href="${escapeHtml(canonical)}" />`,
     `<link rel="describedby" href="${siteConfig.baseUrl}/llms.txt" type="text/markdown" />`,
     `<link rel="alternate" type="text/markdown" href="${absoluteUrl(route.markdownPath)}" />`,
-    '<link rel="icon" href="/favicon.svg" type="image/svg+xml" />',
-    '<link rel="icon" href="/favicon-32x32.png" type="image/png" sizes="32x32" />',
-    '<link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180" />',
+    ...faviconLinks,
     ...siteConfig.fontPreloads.map(href => `<link rel="preload" href="${href}" as="font" type="font/woff2" crossorigin />`),
     `<script type="application/ld+json">${JSON.stringify(routeSchema(route)).replaceAll('<', '\\u003c')}</script>`,
     !preview && analyticsToken ? `<script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon="${escapeHtml(JSON.stringify({ token: analyticsToken }))}"></script>` : '',
@@ -187,7 +171,43 @@ export function replaceHead(html, head) {
 }
 
 export function renderNotFound() {
-  return `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="robots" content="noindex, nofollow"><title>Page not found | Data Sketch</title><link rel="icon" href="/favicon.svg"><style>body{background:#0a0a0a;color:#fff;font:18px/1.7 sans-serif;margin:0;min-height:100vh;display:grid;place-items:center}main{max-width:36rem;padding:2rem}h1{line-height:1.15}a{color:#00e677;text-underline-offset:4px}a:focus-visible{outline:2px solid #00e677;outline-offset:5px}</style></head><body><main><p>DATA SKETCH / 404</p><h1>This page is not in the sketchbook.</h1><p>Check the address or return to the published lessons.</p><a href="/">Back to the gallery</a></main></body></html>\n`;
+  return `<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="${escapeHtml(siteConfig.themeColor)}" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Page not found | Data Sketch</title>
+  ${faviconLinks.join('\n  ')}
+  ${siteConfig.fontPreloads.map(href => `<link rel="preload" href="${href}" as="font" type="font/woff2" crossorigin />`).join('\n  ')}
+  <style>
+    @font-face { font-family: 'IBM Plex Sans'; font-style: normal; font-weight: 400 600; font-display: swap; src: url('/fonts/ibm-plex-sans-v23-latin-400-600.woff2') format('woff2'); }
+    @font-face { font-family: 'Space Grotesk'; font-style: normal; font-weight: 700; font-display: swap; src: url('/fonts/space-grotesk-v22-latin-700.woff2') format('woff2'); }
+    :root { color-scheme: dark; background: #0a0a0a; color: #fff; font-family: 'IBM Plex Sans', sans-serif; }
+    * { box-sizing: border-box; }
+    body { min-height: 100vh; margin: 0; background: radial-gradient(circle at 50% 40%, rgba(0,230,119,.08), transparent 30rem), #0a0a0a; -webkit-font-smoothing: antialiased; }
+    main { display: grid; min-height: 100vh; place-items: center; padding: clamp(1.25rem, 5vw, 2rem); }
+    section { max-width: 36rem; text-align: center; }
+    .code { margin: 0 0 1rem; color: #00e677; font-size: .72rem; font-weight: 600; letter-spacing: .18em; }
+    h1 { margin: 0; font-family: 'Space Grotesk', 'IBM Plex Sans', sans-serif; font-size: clamp(2.3rem, 8vw, 4.6rem); font-weight: 700; line-height: 1.05; letter-spacing: -.04em; }
+    .message { margin: 1.5rem 0 0; color: rgba(255,255,255,.65); font-size: clamp(1rem, 2vw, 1.125rem); line-height: 1.7; }
+    a { display: inline-flex; align-items: center; min-height: 44px; margin-top: 1rem; color: #fff; text-decoration-color: #00e677; text-decoration-thickness: 1px; text-underline-offset: .3rem; }
+    a:hover, a:focus-visible { color: #00e677; text-decoration-thickness: 2px; }
+    a:focus-visible { outline: 2px solid #00e677; outline-offset: 5px; border-radius: 3px; }
+  </style>
+</head>
+<body>
+  <main id="main-content">
+    <section aria-labelledby="not-found-heading">
+      <p class="code">DATA SKETCH / 404</p>
+      <h1 id="not-found-heading">Page not found</h1>
+      <p class="message">The link may be outdated, or the sketch may have moved.</p>
+      <a href="/">Back to gallery</a>
+    </section>
+  </main>
+</body>
+</html>\n`;
 }
 
 function renderHumans() {
@@ -198,7 +218,7 @@ function renderLlms() {
   const lessons = routeManifest.filter(route => route.kind === 'lesson')
     .map(route => `- [${route.title.replace(' | Data Sketch', '')}](${absoluteUrl(route.markdownPath)}): ${route.description}`)
     .join('\n');
-  return `# Data Sketch\n\n> Practical visual lessons about data pipelines, SQL, warehouses, and data quality by Mario Caesar.\n\nCanonical site: ${siteConfig.baseUrl}/. Use the lesson sources below for factual summaries. Upcoming episodes are not published sources.\n\n## Primary pages\n\n- [Data Sketch gallery](${siteConfig.baseUrl}/index.md): Published lesson index and original source links.\n${lessons}\n\n## Author source\n\n- [Mario Caesar portfolio](${siteConfig.portfolioUrl}/index.md): Public professional background and attribution source.\n`;
+  return `# Data Sketch\n\n> ${siteConfig.description}\n\nCanonical site: ${siteConfig.baseUrl}/. Use the lesson sources below for factual summaries. Upcoming episodes are not published sources.\n\n## Primary pages\n\n- [Data Sketch gallery](${siteConfig.baseUrl}/index.md): Published lesson index and original source links.\n${lessons}\n\n## Author source\n\n- [Mario Caesar portfolio](${siteConfig.portfolioUrl}/index.md): Public professional background and attribution source.\n`;
 }
 
 function renderGalleryMarkdown() {
@@ -224,6 +244,9 @@ function renderHeaders(preview) {
   blocks.push('/fonts/*\n  Cache-Control: public, max-age=31536000, immutable');
   blocks.push('/images/*\n  Cache-Control: public, max-age=3600, must-revalidate');
   blocks.push('/og-image.png\n  Cache-Control: public, max-age=3600, must-revalidate');
+  for (const icon of ['/favicon.ico', '/favicon-16x16.png', '/favicon-32x32.png', '/favicon-96x96.png', '/apple-touch-icon.png']) {
+    blocks.push(`${icon}\n  Cache-Control: public, max-age=0, must-revalidate`);
+  }
   blocks.push('/sitemap.xml\n  Content-Type: application/xml; charset=utf-8\n  X-Robots-Tag: noindex');
   blocks.push('/humans.txt\n  Content-Type: text/plain; charset=utf-8');
   blocks.push('/llms.txt\n  Content-Type: text/markdown; charset=utf-8\n  Link: <https://datasketch.caesarmar.io/>; rel="canonical"');
@@ -233,7 +256,7 @@ function renderHeaders(preview) {
 
 function renderSitemap(preview) {
   const entries = preview ? '' : routeManifest.map(route => {
-    const images = routeImages(route).map(image => `<image:image><image:loc>${escapeXml(image.url)}</image:loc><image:caption>${escapeXml(image.alt)}</image:caption></image:image>`).join('');
+    const images = routeImages(route).map(image => `<image:image><image:loc>${escapeXml(image.url)}</image:loc></image:image>`).join('');
     return `<url><loc>${escapeXml(absoluteUrl(route.path))}</loc><lastmod>${routeLastmod(route).slice(0, 10)}</lastmod>${images}</url>`;
   }).join('');
   return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">${entries}</urlset>\n`;

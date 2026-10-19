@@ -1,4 +1,4 @@
-DATA SKETCH - LAUNCH CHECKLIST
+DATA SKETCH - HISTORICAL LAUNCH CHECKLIST
 Updated: 2026-10-02
 
 [x] Standalone React/Vite/Tailwind repo, release 1.0.0, separate launch branch.
@@ -57,3 +57,59 @@ SEO / AGENT READINESS HARDENING - 2026-10-07
 [ ] Rerun the agentic HTTP audit against production after deployment because
     the local SEO safety layer refuses localhost targets.
 [ ] Push/merge/deploy remain blocked until a separate explicit instruction.
+
+EPISODES 05-09 CONTENT UPDATE - 2026-10-19
+----------------------------------------
+
+[x] Isolated branch codex/data-sketch-episodes-05-09; portfolio stays untouched.
+[x] Prepare version 1.0.2 / build v2026.10.19 for local review, not deployment.
+[x] Publish 05-09 with source-bound summaries, walkthroughs, takeaways, tags,
+    month-only dates, alt text, and the five exact supplied LinkedIn shortlinks.
+[x] Preserve 01-04 content/URLs/image bytes; keep two asset-free teasers as 10-11.
+[x] Add five full-artwork 1080 x 1350 JPEG derivatives, each below 200 KB.
+[x] Extend shared route manifest to nine lessons plus the gallery; keep existing
+    style, sorting, LinkedIn card links, and sibling Read lesson links.
+[x] Regenerate source/dist SEO: 10 HTML pages, 10 Markdown pages, nine published
+    diagrams in the image sitemap, matching metadata/schema, and route aliases.
+[x] Typecheck, lint, production build, 13 tests, SEO check, dev/preview HTTP smoke
+    checks, and git diff --check pass. No optional portfolio smoke checks ran.
+[x] Actual preview-context build: ten noindex pages, no analytics, empty sitemap;
+    final build restored to production mode with ten indexable prerenders.
+[x] Responsive gallery checks at requested 320/375/768/1024/1440 px, five direct
+    mobile lesson loads, keyboard sorting, focus glow, hydration, and teaser safety.
+[x] Episode 05 image-failure fallback verified using an isolated local QA proxy.
+[ ] Browser-emulated reduced motion and a full pointer-hover / keyboard traversal
+    remain preview gates; CSS motion tests pass but do not replace media emulation.
+[ ] Review original LinkedIn captions if access is available; redirects alone
+    confirm destination routing, not the caption or its match to the diagram.
+[ ] Obtain a separate instruction before push, merge, deploy, or DNS changes.
+
+    Evidence and caveats: docs/episodes-05-09-update.md.
+
+SEO / BRAND / MINIMAL 404 - 2026-10-19
+------------------------------------
+
+[x] Preserve the episode batch and version 1.0.2 on the existing local branch.
+[x] Gallery description/intro use site config; metadata, schema and Markdown agree.
+[x] Replace shared-file mtime lastmod with validated per-episode modifiedAt dates.
+    Preserve month-only publication dates; a one-episode edit leaves others alone.
+[x] Remove deprecated image:caption sitemap tags while retaining image discovery,
+    HTML alt text and ImageObject captions for all nine published diagrams.
+[x] Generate real ICO 16/32/48, PNG 16/32/96, Apple 180 and lossless OG from the
+    original PNGs. Commit-ready source files and hashes live in design/brand.
+[x] Stop advertising legacy SVG favicon; preserve per-lesson diagram OG cards.
+[x] Minimal static 404: local Plex/Space fonts, green glow, keyboard focus,
+    Back to gallery, no JavaScript, real local HTTP 404 and noindex headers.
+[x] Typecheck, lint, build, 22 tests and dev/restarted-preview HTTP smoke pass.
+[x] Fresh deploy-preview build: ten noindex pages, no beacon, empty sitemap;
+    final dist rebuilt in production mode, with indexable public pages.
+[x] Three mobile Lighthouse runs/page: median P95 gallery / P96 lesson;
+    Accessibility, Best Practices and SEO 100; CLS 0 and TBT 0.
+[x] Responsive 404 and keyboard checks, including font loading and no overflow.
+[ ] Follow up lab LCP around 2.94 s / 2.71 s using field evidence after release;
+    do not describe these lab scores as a field CWV or indexing guarantee.
+[ ] Netlify injected badge remains a hosting-setting backlog, not a source change.
+[ ] Verify actual production headers, icon/share caching, sitemap and indexation
+    only after separate approval to publish/deploy. Main website remains untouched.
+
+    Evidence: docs/seo-brand-404-audit-2026-10-19.md.

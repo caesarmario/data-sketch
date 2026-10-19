@@ -6,7 +6,6 @@ export type GalleryRoute = {
   description: string;
   markdownPath: string;
   markdownOutput: string;
-  lastmodFiles: readonly string[];
 };
 
 export type LessonRoute = {
@@ -19,7 +18,6 @@ export type LessonRoute = {
   description: string;
   markdownPath: string;
   markdownOutput: string;
-  lastmodFiles: readonly string[];
 };
 
 export type SiteRoute = GalleryRoute | LessonRoute;
