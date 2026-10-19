@@ -27,6 +27,8 @@
 - Brand sources are the approved PNGs in design/brand. Generate icon/OG derivatives
   offline; never re-export the legacy design/og-image.svg over the new PNG.
   Old favicon.svg is a legacy asset only and must not be advertised by HTML.
+- Preserve source alpha in every favicon PNG and ICO frame. Use transparent
+  padding; never flatten the mark onto white or another opaque background.
 - Keep 404 as static HTML with both local fonts, noindex metadata, a real HTTP
   404 status and a Back to gallery link. Verify actual Netlify response headers
   after an authorized deploy; local HTTP checks are not production evidence.

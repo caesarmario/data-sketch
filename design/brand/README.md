@@ -14,12 +14,16 @@ without arguments it uses these committed PNGs. If Sharp lives in the existing
 Codex workspace bundle, point NODE_PATH to that bundle's node_modules directory.
 The application build and CI tests do not require Sharp.
 
-Favicon processing composites transparency on the approved white background,
-finds the full nonwhite artwork bounds, then fits that artwork inside a 512 px
-master with 20 px outer padding. No artwork is stretched, redrawn or cropped.
+Favicon processing preserves the source alpha, finds all visible artwork bounds,
+then fits that artwork inside a 512 px master with 20 px transparent outer
+padding. No artwork is stretched, redrawn or cropped, and no opaque background
+is added. Antialiased edge pixels retain partial transparency.
 The current bounds are left 157, top 277, width 685, height 446. Transparent black
-pixels in the source are not black paint; flattening on white preserves the
-intended visible green mark against the selected background.
+pixels in the source remain transparent. An earlier conversion flattened alpha
+onto white; the 2026-10-19 transparency hotfix removes that behavior for the
+master, every PNG size, Apple icon, and every ICO frame.
+Each output size is sampled from the original cropped artwork, with transparent
+padding added after resizing so the final border stays at alpha zero.
 
 The ICO directory contains actual 16, 32 and 48 px PNG frames. Separate PNGs
 are 16, 32 and 96 px; the Apple touch icon is 180 px. The old public/favicon.svg

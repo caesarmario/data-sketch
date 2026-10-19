@@ -113,3 +113,11 @@ SEO / BRAND / MINIMAL 404 - 2026-10-19
     only after separate approval to publish/deploy. Main website remains untouched.
 
     Evidence: docs/seo-brand-404-audit-2026-10-19.md.
+
+FAVICON TRANSPARENCY HOTFIX - 2026-10-19
+--------------------------------------
+[x] Remove white flattening and preserve source alpha in master/PNG/Apple/ICO.
+[x] Sample each size from the original crop; add transparent padding last.
+[x] Add PNG pixel-alpha regression tests, including each embedded ICO frame.
+[ ] Verify the new favicon on production after the authorized main push and
+    existing auto-deploy; distinguish browser favicon cache from served bytes.

@@ -30,29 +30,34 @@ const logoMetadata = await sharp(logo).metadata();
 const ogMetadata = await sharp(og).metadata();
 if (logoMetadata.format !== 'png' || ogMetadata.format !== 'png') throw new Error('Both brand sources must be PNG files');
 
-// Trim only the outer white canvas, including every nonwhite antialiased edge pixel.
-const { data, info } = await sharp(logo).flatten({ background: '#fff' }).ensureAlpha().raw().toBuffer({ resolveWithObject: true });
+// Preserve the source alpha, including partially transparent antialiased edges.
+const transparent = { r: 0, g: 0, b: 0, alpha: 0 };
+const { data, info } = await sharp(logo).ensureAlpha().raw().toBuffer({ resolveWithObject: true });
 let left = info.width, top = info.height, right = -1, bottom = -1;
 for (let y = 0; y < info.height; y++) {
   for (let x = 0; x < info.width; x++) {
     const offset = (y * info.width + x) * info.channels;
-    if (data[offset] < 255 || data[offset + 1] < 255 || data[offset + 2] < 255) {
+    if (data[offset + 3] > 0) {
       left = Math.min(left, x); top = Math.min(top, y);
       right = Math.max(right, x); bottom = Math.max(bottom, y);
     }
   }
 }
-if (right < left) throw new Error('The favicon source contains no nonwhite artwork');
+if (right < left) throw new Error('The favicon source contains no visible artwork');
 const crop = { left, top, width: right - left + 1, height: bottom - top + 1 };
-const master = await sharp(logo).flatten({ background: '#fff' }).extract(crop)
-  .resize(472, 472, { fit: 'contain', background: '#fff' })
-  .extend({ top: 20, bottom: 20, left: 20, right: 20, background: '#fff' })
+const master = await sharp(logo).ensureAlpha().extract(crop)
+  .resize(472, 472, { fit: 'contain', background: transparent })
+  .extend({ top: 20, bottom: 20, left: 20, right: 20, background: transparent })
   .png({ compressionLevel: 9, adaptiveFiltering: true }).toBuffer();
 await fs.writeFile(path.join(sourceDir, 'favicon-master.png'), master);
 
 const icons = new Map();
 for (const size of [16, 32, 48, 96, 180]) {
-  icons.set(size, await sharp(master).resize(size, size).png({ compressionLevel: 9, adaptiveFiltering: true }).toBuffer());
+  const padding = Math.max(1, Math.round(size * 20 / 512));
+  icons.set(size, await sharp(logo).ensureAlpha().extract(crop)
+    .resize(size - padding * 2, size - padding * 2, { fit: 'contain', background: transparent })
+    .extend({ top: padding, bottom: padding, left: padding, right: padding, background: transparent })
+    .png({ compressionLevel: 9, adaptiveFiltering: true }).toBuffer());
 }
 for (const size of [16, 32, 96]) await fs.writeFile(path.join(publicDir, `favicon-${size}x${size}.png`), icons.get(size));
 await fs.writeFile(path.join(publicDir, 'apple-touch-icon.png'), icons.get(180));
@@ -85,7 +90,7 @@ const manifest = {
     logo: { file: 'favicon-source.png', width: logoMetadata.width, height: logoMetadata.height, sha256: digest(logo) },
     og: { file: 'og-image-source.png', width: ogMetadata.width, height: ogMetadata.height, sha256: digest(og) },
   },
-  favicon: { crop, masterSize: 512, outerPadding: 20, icoSizes: sizes, pngSizes: [16, 32, 96], appleTouchSize: 180 },
+  favicon: { crop, background: 'transparent', masterSize: 512, outerPadding: 20, icoSizes: sizes, pngSizes: [16, 32, 96], appleTouchSize: 180 },
   og: { width: 1200, height: 630, sha256: digest(ogOutput), rgbaSha256: digest(await sharp(ogOutput).ensureAlpha().raw().toBuffer()) },
 };
 await fs.writeFile(path.join(sourceDir, 'manifest.json'), JSON.stringify(manifest, null, 2) + '\n');

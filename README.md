@@ -74,8 +74,8 @@ DNS, custom domain, HTTPS, Search Console submission and actual analytics verifi
 
 The supplied 2145 x 186 PNG header wordmark is preserved unchanged. Current brand
 sources are `design/brand/favicon-source.png` and `design/brand/og-image-source.png`.
-The favicon trims only outer whitespace/transparency, composites on white, and
-keeps the artwork's proportions. Outputs are a real 16/32/48 ICO, 16/32/96 PNGs,
+The favicon trims transparent margins, preserves source alpha, and adds only
+transparent padding while keeping the artwork's proportions. Outputs are a real 16/32/48 ICO, 16/32/96 PNGs,
 and a 180 px Apple icon. The gallery OG is the approved 1200 x 630 PNG; lesson
 OG cards remain their individual diagrams.
 

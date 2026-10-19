@@ -58,6 +58,15 @@ needs Git timestamps to reproduce these SEO outputs.
 
 ## Brand and 404
 
+### Favicon transparency correction
+
+The initial favicon conversion flattened the transparent PNG onto white. The
+2026-10-19 hotfix preserves source alpha instead, trims only fully transparent
+margins, and uses transparent padding on the master, PNGs, Apple icon and all
+three ICO frames. Two pixel-level tests decode PNG scanline filters and check
+transparent corners, visible artwork, antialiased edges and absence of opaque
+white pixels. The original source PNG and OG image remain unchanged.
+
 Original PNG source hashes and dimensions are in design/brand/manifest.json.
 Favicon outputs are ICO frames 16/32/48, PNGs 16/32/96, and Apple 180. Old SVG
 icon links are removed from all generated HTML, including 404. Legacy files are
