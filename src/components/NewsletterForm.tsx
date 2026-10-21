@@ -3,15 +3,20 @@ import { newsletterConfig } from '../../newsletter.config.mjs';
 
 export default function NewsletterForm() {
   const host = useRef<HTMLDivElement>(null);
+  const [interactive, setInteractive] = useState(false);
   const [status, setStatus] = useState<'loading' | 'ready' | 'unavailable'>('loading');
 
   useEffect(() => {
     const container = host.current;
     if (!container) return;
+    setInteractive(true);
     let script: HTMLScriptElement | undefined;
     let frame: HTMLIFrameElement | undefined;
     const loaded = () => setStatus('ready');
-    const failed = () => setStatus('unavailable');
+    const failed = () => {
+      container.hidden = true;
+      setStatus('unavailable');
+    };
     const observer = new MutationObserver(() => {
       const next = container.querySelector('iframe');
       if (!next || next === frame) return;
@@ -44,11 +49,14 @@ export default function NewsletterForm() {
   }, []);
 
   return (
-    <section className="newsletter-signup" aria-label="Newsletter signup">
+    <section className="newsletter-signup" aria-label="Newsletter signup" data-status={status} data-interactive={interactive}>
       <div className="newsletter-form-host" ref={host} />
-      {status !== 'ready' && <p className="newsletter-form-status" role="status">{status === 'loading' ? 'Loading the signup form…' : 'The signup form has not loaded. You can open it using the link below.'}</p>}
-      <p className="newsletter-form-help"><a href={newsletterConfig.formUrl}>Open the signup form</a><span aria-hidden="true"> · </span><a href={newsletterConfig.privacyPath}>Privacy</a></p>
-      <noscript><p>JavaScript is off. Use the signup link above to subscribe on beehiiv.</p></noscript>
+      {interactive && status !== 'ready' && <p className="newsletter-form-status" role="status">{status === 'loading' ? newsletterConfig.formCopy.loading : newsletterConfig.formCopy.unavailable}</p>}
+      <p className="newsletter-form-help">
+        {(!interactive || status === 'unavailable') && <a href={newsletterConfig.formUrl}>{newsletterConfig.formCopy.fallback}</a>}
+        <a href={newsletterConfig.privacyPath}>Privacy</a>
+      </p>
+      <noscript><p>{newsletterConfig.formCopy.noScript}</p></noscript>
     </section>
   );
 }

@@ -146,3 +146,28 @@ NEWSLETTER INTEGRATION - 2026-10-21
     the portfolio, and verify production URLs, Netlify headers and the signup flow.
 
     Evidence and limits: docs/newsletter-integration.md.
+
+NEWSLETTER REFINEMENT - 2026-10-22 (ASIA/JAKARTA)
+------------------------------------------------
+[x] Apply the approved single-column /newsletter design, English wording,
+    compact navigation/footer and full diagram previews for episodes 2 and 8.
+[x] Preserve the existing dark/green theme, local fonts, official form ID and
+    route behavior; keep gallery, lessons and portfolio outside this redesign.
+[x] Share public newsletter copy with Markdown/metadata; separate the policy's
+    original 2026-10-21 date from newsletter modifiedAt and build v2026.10.22.
+[x] Make loading reserve 200 px and follow actual iframe height when ready;
+    verify blocked/timeout/no-JavaScript recovery without blank reserved space.
+[x] Typecheck, lint, build, 28 tests, SEO and dev/preview HTTP checks pass.
+[x] Browser widths 320/375/414/768/1024/1440, keyboard focus, 200% CSS-zoom
+    reflow, one loader/iframe, font loading and original diagram ratios checked.
+[x] Actual preview output: 12 noindex pages, no beacon, empty sitemap; local
+    production build restored. Desktop/mobile visual review and final captures done.
+[x] Record exact beehiiv builder values and single-field label limitation.
+[ ] Owner: apply/publish docs/newsletter-form-settings.md in beehiiv; verify
+    compact layout, native labeling options, contrast, consent and double opt-in.
+[ ] Verify confirmation/welcome delivery, replies and unsubscribe with an
+    owner-controlled email. No subscription was submitted during this work.
+[ ] Merge/deploy only after owner instruction; verify actual production headers
+    and newsletter flow after release. Main remains unchanged.
+
+    Evidence: docs/newsletter-redesign.md and its desktop/mobile screenshots.

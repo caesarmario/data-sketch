@@ -244,10 +244,10 @@ function renderInformationMarkdown(route) {
       if (!sketch) throw new Error(`Newsletter sample episode ${id} is missing`);
       return `- [${sketch.title}](${absoluteUrl(sketch.lessonPath)})`;
     }).join('\n');
-    return `# ${newsletterConfig.heading}\n\n> ${newsletterConfig.description}\n\nCanonical page: ${absoluteUrl(route.path)}\n\n${newsletterConfig.intro} You can unsubscribe at any time.\n\n[Subscribe](${absoluteUrl(route.path)}) | [Open the signup form](${newsletterConfig.formUrl})\n\n## A look inside the sketchbook\n\n${samples}\n\nWritten by [Mario Caesar](${siteConfig.portfolioUrl}/).\n\n[Newsletter privacy](${absoluteUrl(newsletterConfig.privacyPath)})\n`;
+    return `# ${newsletterConfig.heading}\n\n> ${newsletterConfig.description}\n\nCanonical page: ${absoluteUrl(route.path)}\n\n${newsletterConfig.intro}\n\n${newsletterConfig.frequency}\n\n[${newsletterConfig.formCopy.button}](${newsletterConfig.formUrl})\n\n${newsletterConfig.formCopy.consent}\n\n## ${newsletterConfig.samplesHeading}\n\n${samples}\n\n[${newsletterConfig.authorLink}](${siteConfig.portfolioUrl}/)\n\n[Newsletter privacy](${absoluteUrl(newsletterConfig.privacyPath)})\n`;
   }
   const sections = newsletterConfig.privacySections.map(section => `## ${section.heading}\n\n${section.body}`).join('\n\n');
-  return `# Newsletter privacy\n\nCanonical page: ${absoluteUrl(route.path)}\n\nUpdated: ${newsletterConfig.modifiedAt}\n\n${sections}\n\n## Contact and provider policies\n\n- [Contact Mario](mailto:${newsletterConfig.contact})\n- [beehiiv privacy policy](https://www.beehiiv.com/privacy)\n- [Cloudflare privacy policy](https://www.cloudflare.com/privacypolicy/)\n`;
+  return `# Newsletter privacy\n\nCanonical page: ${absoluteUrl(route.path)}\n\nUpdated: ${newsletterConfig.privacyModifiedAt}\n\n${sections}\n\n## Contact and provider policies\n\n- [Contact Mario](mailto:${newsletterConfig.contact})\n- [beehiiv privacy policy](https://www.beehiiv.com/privacy)\n- [Cloudflare privacy policy](https://www.cloudflare.com/privacypolicy/)\n`;
 }
 
 function renderGalleryMarkdown() {

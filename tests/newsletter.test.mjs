@@ -40,10 +40,45 @@ test('newsletter prerender offers a working fallback, published samples and priv
   for (const route of routeManifest) {
     const page = fs.readFileSync(`dist/${route.output}`, 'utf8');
     assert.ok(!page.includes(`src="${newsletterConfig.loaderUrl}"`));
-    assert.ok(page.includes(`href="${newsletterConfig.path}"`));
+    if (route.kind !== 'newsletter') assert.ok(page.includes(`href="${newsletterConfig.path}"`));
   }
   const privacy = fs.readFileSync('dist/privacy.html', 'utf8');
   for (const section of newsletterConfig.privacySections) assert.ok(privacy.includes(section.heading));
   assert.ok(privacy.includes('https://www.beehiiv.com/privacy'));
   assert.ok(privacy.includes(`mailto:${newsletterConfig.contact}`));
+});
+
+test('newsletter HTML and Markdown share the approved copy and show two full diagram previews', () => {
+  const html = fs.readFileSync('dist/newsletter.html', 'utf8');
+  const markdown = generateFiles()['newsletter/index.md'];
+  for (const copy of [newsletterConfig.heading, newsletterConfig.intro, newsletterConfig.frequency, newsletterConfig.samplesHeading, newsletterConfig.authorLink]) {
+    assert.ok(html.includes(copy), `HTML is missing ${copy}`);
+    assert.ok(markdown.includes(copy), `Markdown is missing ${copy}`);
+  }
+  const samples = html.match(/<section class="newsletter-samples"[\s\S]*?<\/section>/)[0];
+  assert.equal((samples.match(/<img /g) ?? []).length, 2);
+  assert.equal((samples.match(/width="1080" height="1350"/g) ?? []).length, 2);
+  assert.equal((samples.match(/Read lesson/g) ?? []).length, 2);
+  const header = html.match(/<header class="masthead">[\s\S]*?<\/header>/)[0];
+  assert.ok(header.includes('Browse sketches'));
+  assert.ok(!header.includes('Subscribe'));
+  assert.ok(!header.includes('Visit my website'));
+  const footer = html.match(/<footer class="newsletter-footer">[\s\S]*?<\/footer>/)[0];
+  assert.ok(footer.includes('Site information'));
+  assert.ok(!footer.includes('Mario Caesar social profiles'));
+});
+
+test('newsletter edits keep the policy editorial date independent', () => {
+  const files = generateFiles();
+  const policyRoute = routeManifest.find(route => route.kind === 'privacy');
+  const signupRoute = routeManifest.find(route => route.kind === 'newsletter');
+  const policy = fs.readFileSync('dist/privacy.html', 'utf8');
+  assert.equal(newsletterConfig.privacyModifiedAt, '2026-10-21');
+  assert.equal(policyRoute.modifiedAt, newsletterConfig.privacyModifiedAt);
+  assert.equal(signupRoute.modifiedAt, newsletterConfig.modifiedAt);
+  assert.ok(policy.includes(`<time dateTime="${newsletterConfig.privacyModifiedAt}">21 October 2026</time>`) || policy.includes(`<time datetime="${newsletterConfig.privacyModifiedAt}">21 October 2026</time>`));
+  assert.ok(files['privacy/index.md'].includes(`Updated: ${newsletterConfig.privacyModifiedAt}`));
+  const graph = JSON.parse(renderHead({ route: policyRoute, preview: false }).match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/)[1])['@graph'];
+  assert.equal(graph.find(entry => entry['@type'] === 'WebPage').dateModified, newsletterConfig.privacyModifiedAt);
+  assert.ok(files['sitemap.xml'].includes(`<loc>${siteConfig.baseUrl}/privacy</loc><lastmod>${newsletterConfig.privacyModifiedAt}</lastmod>`));
 });

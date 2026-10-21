@@ -5,6 +5,11 @@ Prepared on 21 October 2026. The signup page lives at
 and links to the provider policies. Both pages use the existing dark/green style,
 local fonts, prerendering, Markdown alternates, and route manifest.
 
+The 22 October newsletter refinement is recorded in
+[newsletter-redesign.md](newsletter-redesign.md). Its remaining vendor changes
+are in [newsletter-form-settings.md](newsletter-form-settings.md). These are
+manual beehiiv settings; they have not been applied through this environment.
+
 The header and the end of each published lesson link to the signup page. The
 portfolio adds a secondary link beside its existing Data Sketch shortcut. Release
 Data Sketch before the portfolio so that the new destination exists first.
@@ -16,7 +21,7 @@ accessible iframe title and a direct signup link if JavaScript or the provider
 script is unavailable. No API key, custom subscriber database, or server endpoint
 was added. Confirmation and welcome email behavior remains controlled in beehiiv.
 
-Build labels on both sites are `v2026.10.21`. The shared Data Sketch header,
+The initial integration used build labels `v2026.10.21` on both sites. The shared Data Sketch header,
 lesson signup invitation, and footer privacy link changed rendered content, so
 the gallery and nine lessons have editorial modification dates of 21 October.
 Original publication months, lesson copy, source URLs, and image bytes are intact.
@@ -50,7 +55,8 @@ was changed during these checks. Test confirmation, subscriber status, welcome
 email delivery, replies, and unsubscribe using an owner-controlled address.
 
 The embedded provider currently presents the email input using its placeholder.
-Field labels and consent text remain editable in the beehiiv form builder.
+The label toggle may be disabled for single-field forms; see the documented
+vendor limitation and remaining consent/placeholder settings in the builder guide.
 
 Production deployment, actual Netlify headers/clean URLs, and the subscription
 email flow still require release verification. Keep production `main` unchanged

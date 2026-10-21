@@ -29,14 +29,25 @@ function Header({ route }: { route: SiteRoute }) {
         <img src="/brand/data-sketch-wordmark.png" alt="Data Sketch" width={2145} height={186} />
       </a>
       <nav className="masthead-actions" aria-label="Site navigation">
-        <a href={siteConfig.portfolioUrl} className="portfolio-link"><Globe size={16} aria-hidden="true" />Visit my website</a>
-        <a href={newsletterConfig.path} className="subscribe-link" aria-current={route.kind === 'newsletter' ? 'page' : undefined}>Subscribe</a>
+        {route.kind === 'newsletter' ? <a href="/" className="portfolio-link">Browse sketches<ArrowUpRight size={16} aria-hidden="true" /></a> : <>
+          <a href={siteConfig.portfolioUrl} className="portfolio-link"><Globe size={16} aria-hidden="true" />Visit my website</a>
+          <a href={newsletterConfig.path} className="subscribe-link">Subscribe</a>
+        </>}
       </nav>
     </header>
   );
 }
 
-function Footer({ compact = false }: { compact?: boolean }) {
+function Footer({ compact = false, newsletter = false }: { compact?: boolean; newsletter?: boolean }) {
+  if (newsletter) return (
+    <footer className="newsletter-footer">
+      <div className="footer-bottom">
+        <p className="footer-credit">Made by <a className="footer-author" href={siteConfig.portfolioUrl}>Mario Caesar</a></p>
+        <a href={newsletterConfig.privacyPath} className="footer-privacy">Privacy</a>
+      </div>
+      <UtilityLinks inline />
+    </footer>
+  );
   return (
     <footer>
       {!compact && <div className="footer-invitation">
@@ -142,12 +153,12 @@ export default function App({ route }: { route: SiteRoute }) {
     <>
       <a className="skip-link" href="#main-content">Skip to content</a>
       <Spotlight />
-      <div className="site-shell">
+      <div className={`site-shell${route.kind === 'newsletter' ? ' site-shell-newsletter' : ''}`}>
         <Header route={route} />
         {content}
-        <Footer compact={route.kind === 'newsletter' || route.kind === 'privacy'} />
+        <Footer compact={route.kind === 'privacy'} newsletter={route.kind === 'newsletter'} />
       </div>
-      <UtilityLinks inline={route.kind === 'newsletter' || route.kind === 'privacy'} />
+      {route.kind !== 'newsletter' && <UtilityLinks inline={route.kind === 'privacy'} />}
       <BackToTop />
     </>
   );

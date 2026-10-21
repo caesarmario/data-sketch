@@ -65,7 +65,7 @@ export const routeManifest = Object.freeze([
     description: 'How Mario Caesar and beehiiv handle Data Sketch newsletter subscriptions, cookies, and your privacy choices.',
     markdownPath: '/privacy/index.md',
     markdownOutput: 'privacy/index.md',
-    modifiedAt: newsletterConfig.modifiedAt,
+    modifiedAt: newsletterConfig.privacyModifiedAt,
   },
   {
     kind: 'lesson',
