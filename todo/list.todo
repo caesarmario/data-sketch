@@ -171,3 +171,14 @@ NEWSLETTER REFINEMENT - 2026-10-22 (ASIA/JAKARTA)
     and newsletter flow after release. Main remains unchanged.
 
     Evidence: docs/newsletter-redesign.md and its desktop/mobile screenshots.
+
+NEWSLETTER WORDING - 2026-10-22 (ASIA/JAKARTA)
+--------------------------------------------
+[x] Use "Data engineering, explained visually." and the approved series-focused
+    introduction, preserving "Two emails a month." and the existing layout.
+[x] Synchronize newsletter metadata and generated Markdown from its config.
+[x] Typecheck, lint, build, 28 existing tests and SEO checks pass; browser widths
+    320/375/768/1440 show no text overflow or uncaught errors. Refresh screenshots.
+[x] Retain v2026.10.22 and newsletter modifiedAt: this is the same Jakarta
+    development date. Privacy, lessons, gallery and beehiiv settings are unchanged.
+[ ] Existing beehiiv builder and production release gates above still apply.

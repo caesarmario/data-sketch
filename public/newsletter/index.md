@@ -1,10 +1,10 @@
-# SQL and pipelines, explained visually.
+# Data engineering, explained visually.
 
-> Diagrams and worked examples on SQL and data engineering, by Mario Caesar. Two emails a month.
+> Data engineering diagrams and worked examples by Mario Caesar, with short explanations you can use in your own work. Two emails a month.
 
 Canonical page: https://datasketch.caesarmar.io/newsletter
 
-I’m Mario Caesar. I share diagrams and worked examples, with short explanations you can follow and use in your own work.
+Data Sketch is a series of diagrams and worked examples, with short explanations you can follow and use in your own work.
 
 Two emails a month.
 

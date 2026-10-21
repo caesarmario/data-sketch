@@ -1,7 +1,7 @@
 # Newsletter redesign — 22 October 2026
 
 The `/newsletter` page now uses a left-aligned reading column up to 640 px wide.
-The heading explains the subject, Mario's introduction explains the format, and
+The heading explains the subject, the description explains the series format, and
 the frequency precedes the signup form. The existing logo, dark/green palette,
 local Space Grotesk and IBM Plex Sans, official beehiiv integration, canonical
 route, and prerendering remain in use.
@@ -20,6 +20,21 @@ label are 22 October, the implementation date in Asia/Jakarta. The underlying
 package version remains 1.0.2; lesson and gallery editorial dates stay unchanged.
 
 ## Visual review
+
+The wording was refined on the same development date to match the wider data
+engineering scope. The headline is **Data engineering, explained visually.**
+The introduction reads: **Data Sketch is a series of diagrams and worked
+examples, with short explanations you can follow and use in your own work.**
+Frequency remains **Two emails a month.** Metadata uses the same scope and names
+Mario Caesar as author; the layout, fonts and form settings are unchanged.
+The screenshots below are refreshed for this wording update.
+
+For this copy update, typecheck, lint, production build, all 28 existing tests
+and SEO checks pass. Generated HTML and Markdown contain the approved wording;
+description, Open Graph and Twitter metadata agree. A fresh browser pass at 320,
+375, 768 and 1440 px found no text/page overflow or uncaught page errors, with one
+loader and iframe. The headline takes two lines at 320, 375 and 1440 px, and one
+line at 768 px. No layout adjustment was needed.
 
 Actual local production-build captures, using the currently published vendor
 form rather than a mockup:
