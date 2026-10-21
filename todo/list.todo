@@ -121,3 +121,28 @@ FAVICON TRANSPARENCY HOTFIX - 2026-10-19
 [x] Add PNG pixel-alpha regression tests, including each embedded ICO frame.
 [ ] Verify the new favicon on production after the authorized main push and
     existing auto-deploy; distinguish browser favicon cache from served bytes.
+
+NEWSLETTER INTEGRATION - 2026-10-21
+-----------------------------------
+[x] Prepare /newsletter and /privacy on codex/datasketch-newsletter, retaining
+    the existing theme, local typography, gallery, and original lesson sources.
+[x] Add Subscribe to the header and the end of each published lesson; add a
+    secondary Data Sketch newsletter link in the separately requested portfolio.
+[x] Embed the supplied beehiiv form after hydration, with one iframe, a title,
+    a direct signup fallback, and no third-party load on lesson/privacy pages.
+[x] Extend the route types, prerendering, metadata, WebPage schema, Markdown,
+    sitemap, aliases, headers, and HTTP checks for both new public pages.
+[x] Update both public build labels to v2026.10.21; record the shared rendered
+    header/CTA/footer update in gallery/lesson editorial dates, not publication dates.
+[x] Typecheck, lint, build, 26 tests, SEO and dev/preview HTTP checks pass.
+[x] Browser checks pass at 320/375/768/1024/1440 px on both websites; no horizontal
+    overflow or uncaught errors, one form, and a 44 px portfolio newsletter link.
+[x] Loader-blocked and JavaScript-disabled fallback checks pass. Actual preview
+    build is noindex without analytics and has an empty sitemap; production
+    output is restored locally. Portfolio CI checks and 120 tests pass.
+[ ] Verify confirmation, welcome delivery, replies and unsubscribe using an
+    owner-controlled email address; no subscription was submitted during QA.
+[ ] Merge/deploy only after owner instruction. Release Data Sketch first, then
+    the portfolio, and verify production URLs, Netlify headers and the signup flow.
+
+    Evidence and limits: docs/newsletter-integration.md.

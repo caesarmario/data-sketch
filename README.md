@@ -4,6 +4,15 @@ Visual data engineering lessons by Mario Caesar. Standalone home for the gallery
 
 Production: https://datasketch.caesarmar.io/. Changes in the current development branch remain local until release approval.
 
+## Newsletter
+
+The `/newsletter` page embeds the official Data Sketch beehiiv signup form and
+links to two published sample lessons. Subscribe links appear in the header and
+after each lesson; the portfolio links to the same page. `/privacy` explains the
+subscription data flow. Form configuration and public copy live in
+`newsletter.config.mjs`. See [integration and verification](docs/newsletter-integration.md)
+for the release order and the email-delivery checks that remain outstanding.
+
 ## Episode 05-09 content update
 
 Version `1.0.2`, build `v2026.10.19`: nine published episodes and two asset-free

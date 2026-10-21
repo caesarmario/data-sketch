@@ -19,6 +19,12 @@ for (const base of [process.env.DATA_SKETCH_DEV_URL ?? 'http://127.0.0.1:8081', 
   for (const route of [...routeManifest.map(entry => entry.path), ...routeManifest.map(entry => entry.markdownPath), ...published.map(sketch => sketch.image), '/favicon.ico', '/favicon-16x16.png', '/favicon-32x32.png', '/favicon-96x96.png', '/apple-touch-icon.png', '/brand/data-sketch-wordmark.png', '/og-image.png', '/sitemap.xml', '/robots.txt', '/humans.txt', '/llms.txt', '/fonts/ibm-plex-sans-v23-latin-400-600.woff2', '/fonts/space-grotesk-v22-latin-700.woff2']) {
     const response = await fetch(base + route);
     assert.equal(response.status, 200, `${base}${route}`);
+    const page = routeManifest.find(entry => entry.path === route);
+    if (page) {
+      const html = await response.text();
+      assert.ok(html.includes(`<title>${page.title}</title>`), `${base}${route} has route-specific metadata`);
+      continue;
+    }
     if (route.endsWith('.jpg')) assert.ok(response.headers.get('content-type')?.startsWith('image/jpeg'));
     if (route.endsWith('.png')) assert.ok(response.headers.get('content-type')?.startsWith('image/png'));
     if (route.endsWith('.ico')) assert.match(response.headers.get('content-type') ?? '', /^image\/(?:x-icon|vnd\.microsoft\.icon)/);

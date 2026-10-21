@@ -7,6 +7,8 @@ Canonical site: https://datasketch.caesarmar.io/. Use the lesson sources below f
 ## Primary pages
 
 - [Data Sketch gallery](https://datasketch.caesarmar.io/index.md): Published lesson index and original source links.
+- [Newsletter](https://datasketch.caesarmar.io/newsletter/index.md): Signup information and email frequency.
+- [Newsletter privacy](https://datasketch.caesarmar.io/privacy/index.md): Subscription data and privacy choices.
 - [Backfill Playbook: From Request to Release](https://datasketch.caesarmar.io/sketches/backfill-playbook/index.md): A five-stage backfill workflow covering scope, strategy, partitioned runs, validation gates, and atomic publishing.
 - [Join Duplication Debugging Workflow](https://datasketch.caesarmar.io/sketches/join-duplication-debugging/index.md): Steps for tracing inflated metrics through row counts, join keys, table grain, join type, and null behavior.
 - [Full Refresh vs Incremental Load](https://datasketch.caesarmar.io/sketches/full-refresh-vs-incremental-load/index.md): A comparison of full refresh and incremental loading across data volume, refresh cost, watermarks, late updates, and upserts.

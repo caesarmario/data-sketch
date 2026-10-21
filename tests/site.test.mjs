@@ -100,10 +100,12 @@ test('sorting remains deterministic and does not mutate episode data', () => {
   assert.equal(data.sketches[0].id, 1);
 });
 
-test('typed route manifest exposes one gallery and exactly nine published lessons', () => {
-  assert.equal(routeManifest.length, 10);
+test('typed route manifest exposes the gallery, nine lessons, newsletter and privacy', () => {
+  assert.equal(routeManifest.length, 12);
   assert.deepEqual(routeManifest.map(route => route.path), [
     '/',
+    '/newsletter',
+    '/privacy',
     '/sketches/backfill-playbook/',
     '/sketches/join-duplication-debugging/',
     '/sketches/full-refresh-vs-incremental-load/',
@@ -180,20 +182,23 @@ test('metadata, schema, sitemap and text endpoints are route-aware and source-sa
       assert.ok(head.includes('"keywords"'));
       assert.ok(head.includes('"dateModified"'));
       assert.ok(!head.includes('datePublished'));
-    } else {
+    } else if (route.kind === 'gallery') {
       assert.ok(head.includes('"@type":"CollectionPage"'));
+    } else {
+      assert.ok(head.includes('"@type":"WebPage"'));
+      assert.ok(!head.includes('"@type":"Article"'));
     }
   }
   const files = generateFiles();
-  assert.equal((files['sitemap.xml'].match(/<loc>/g) ?? []).length, 10);
+  assert.equal((files['sitemap.xml'].match(/<loc>/g) ?? []).length, 12);
   assert.ok(files['sitemap.xml'].includes('xmlns:image='));
-  assert.equal((files['sitemap.xml'].match(/<image:image>/g) ?? []).length, 18);
+  assert.equal((files['sitemap.xml'].match(/<image:image>/g) ?? []).length, 20);
   assert.ok(!files['sitemap.xml'].includes('image:caption'));
   for (const route of routeManifest) assert.ok(files['sitemap.xml'].includes(`${siteConfig.baseUrl}${route.path}`));
   assert.ok(!files['sitemap.xml'].includes('episode-10'));
   assert.ok(!files['sitemap.xml'].includes('episode-11'));
-  assert.equal(new Set(routeManifest.map(route => route.title)).size, 10);
-  assert.equal(new Set(routeManifest.map(route => route.description)).size, 10);
+  assert.equal(new Set(routeManifest.map(route => route.title)).size, 12);
+  assert.equal(new Set(routeManifest.map(route => route.description)).size, 12);
   assert.ok(!files['sitemap.xml'].includes('humans.txt'));
   assert.ok(!files['sitemap.xml'].includes('llms.txt'));
   assert.ok(files['humans.txt'].includes('Author: Mario Caesar'));
@@ -220,7 +225,7 @@ test('shared utilities expose the configured build and accessible controls', asy
   const { render } = await server.ssrLoadModule('/src/entry-server.tsx');
   const html = render('/');
   assert.equal(siteConfig.version, '1.0.2');
-  assert.equal(siteConfig.buildVersion, 'v2026.10.19');
+  assert.equal(siteConfig.buildVersion, 'v2026.10.21');
   assert.ok(html.includes('aria-label="Site information"'));
   assert.ok(html.includes('href="/humans.txt"'));
   assert.ok(html.includes('href="/llms.txt"'));
@@ -270,7 +275,7 @@ test('preview output is noindex, has no analytics and publishes an empty sitemap
   assert.ok(!generateFiles({ preview: true })['sitemap.xml'].includes('<loc>'));
 });
 
-test('production build contains all ten hydrated pages and public support files', () => {
+test('production build contains every hydrated page and public support file', () => {
   for (const route of routeManifest) {
     const html = fs.readFileSync(`dist/${route.output}`, 'utf8');
     assert.ok(html.includes('<main'));

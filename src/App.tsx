@@ -1,12 +1,15 @@
 import { useEffect, useState } from 'react';
 import { ArrowLeft, ArrowUpRight, Clock3, Globe, ListOrdered } from 'lucide-react';
 import { siteConfig } from '../site.config.mjs';
+import { newsletterConfig } from '../newsletter.config.mjs';
 import { routeManifest } from '../site.routes.mjs';
 import { findPublishedSketch, sketches, sortSketches, type PublishedSketch, type SortOrder } from './data/sketches';
 import BackToTop from './components/BackToTop';
 import SketchCard from './components/SketchCard';
 import Spotlight from './components/Spotlight';
 import UtilityLinks from './components/UtilityLinks';
+import NewsletterPage from './components/NewsletterPage';
+import PrivacyPage from './components/PrivacyPage';
 import { LinkedInIcon, GitHubIcon, MediumIcon, EmailIcon, XIcon } from './components/SocialIcons';
 
 const socials = [
@@ -19,26 +22,30 @@ const socials = [
 
 type SiteRoute = (typeof routeManifest)[number];
 
-function Header() {
+function Header({ route }: { route: SiteRoute }) {
   return (
     <header className="masthead">
       <a href="/" aria-label="Data Sketch home" className="brand">
         <img src="/brand/data-sketch-wordmark.png" alt="Data Sketch" width={2145} height={186} />
       </a>
-      <a href={siteConfig.portfolioUrl} className="portfolio-link"><Globe size={16} aria-hidden="true" />Visit my website</a>
+      <nav className="masthead-actions" aria-label="Site navigation">
+        <a href={siteConfig.portfolioUrl} className="portfolio-link"><Globe size={16} aria-hidden="true" />Visit my website</a>
+        <a href={newsletterConfig.path} className="subscribe-link" aria-current={route.kind === 'newsletter' ? 'page' : undefined}>Subscribe</a>
+      </nav>
     </header>
   );
 }
 
-function Footer() {
+function Footer({ compact = false }: { compact?: boolean }) {
   return (
     <footer>
-      <div className="footer-invitation">
+      {!compact && <div className="footer-invitation">
         <h2>More sketches coming soon...</h2>
         <a className="follow-link" href={`${siteConfig.portfolioUrl}/linkedin`} target="_blank" rel="noopener noreferrer">Follow on LinkedIn <ArrowUpRight size={18} aria-hidden="true" /><span className="sr-only"> (opens in a new tab)</span></a>
-      </div>
+      </div>}
       <div className="footer-bottom">
         <p className="footer-credit">Made by <a className="footer-author" href={siteConfig.portfolioUrl}>Mario Caesar</a></p>
+        <a href={newsletterConfig.privacyPath} className="footer-privacy">Privacy</a>
         <nav aria-label="Mario Caesar social profiles" className="socials">
           {socials.map(({ label, href, Icon }) => <a key={label} href={href} aria-label={label === 'Email' ? label : `${label} (opens in a new tab)`} target={label === 'Email' ? undefined : '_blank'} rel={label === 'Email' ? undefined : 'noopener noreferrer'}><Icon className="size-5" /></a>)}
         </nav>
@@ -112,6 +119,10 @@ function LessonPage({ sketch }: { sketch: LessonSketch }) {
         </aside>
         <a className="original-post-link" href={sketch.href} target="_blank" rel="noopener noreferrer">View the original LinkedIn post <ArrowUpRight size={18} aria-hidden="true" /><span className="sr-only"> (opens in a new tab)</span></a>
       </article>
+      <aside className="lesson-newsletter" aria-labelledby="lesson-newsletter-heading">
+        <div><h2 id="lesson-newsletter-heading">Get Data Sketch by email</h2><p>Two emails a month on SQL and data engineering, with diagrams and worked examples.</p></div>
+        <a href={newsletterConfig.path} className="subscribe-link">Subscribe</a>
+      </aside>
     </main>
   );
 }
@@ -119,7 +130,9 @@ function LessonPage({ sketch }: { sketch: LessonSketch }) {
 export default function App({ route }: { route: SiteRoute }) {
   let content;
   if (route.kind === 'gallery') content = <GalleryPage />;
-  else {
+  else if (route.kind === 'newsletter') content = <NewsletterPage />;
+  else if (route.kind === 'privacy') content = <PrivacyPage />;
+  else if (route.kind === 'lesson') {
     const sketch = findPublishedSketch(route.episodeId);
     if (!sketch) throw new Error(`Published episode ${route.episodeId} is missing`);
     content = <LessonPage sketch={sketch} />;
@@ -130,11 +143,11 @@ export default function App({ route }: { route: SiteRoute }) {
       <a className="skip-link" href="#main-content">Skip to content</a>
       <Spotlight />
       <div className="site-shell">
-        <Header />
+        <Header route={route} />
         {content}
-        <Footer />
+        <Footer compact={route.kind === 'newsletter' || route.kind === 'privacy'} />
       </div>
-      <UtilityLinks />
+      <UtilityLinks inline={route.kind === 'newsletter' || route.kind === 'privacy'} />
       <BackToTop />
     </>
   );

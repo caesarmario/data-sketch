@@ -51,7 +51,8 @@ export default defineConfig(({ command }) => {
   const seo: Plugin = {
     name: 'data-sketch-seo',
     transformIndexHtml(html, context) {
-      const pathname = context.path === '/index.html' ? '/' : context.path;
+      const requestPath = context.originalUrl ? new URL(context.originalUrl, 'http://localhost').pathname : context.path;
+      const pathname = requestPath === '/index.html' ? '/' : requestPath;
       const route = findRoute(pathname) ?? routeManifest[0];
       return html.replace('<!--seo-head-->', renderHead({ route, preview: command === 'serve' || isPreview(), analyticsToken: process.env[siteConfig.analyticsTokenEnv] ?? '' }));
     },

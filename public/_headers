@@ -13,6 +13,22 @@
   X-Robots-Tag: noindex, follow
   Link: <https://datasketch.caesarmar.io/>; rel="canonical", <https://datasketch.caesarmar.io/llms.txt>; rel="describedby"; type="text/markdown"
 
+/newsletter
+  Link: <https://datasketch.caesarmar.io/newsletter>; rel="canonical", <https://datasketch.caesarmar.io/llms.txt>; rel="describedby"; type="text/markdown", <https://datasketch.caesarmar.io/newsletter/index.md>; rel="alternate"; type="text/markdown"
+
+/newsletter/index.md
+  Content-Type: text/markdown; charset=utf-8
+  X-Robots-Tag: noindex, follow
+  Link: <https://datasketch.caesarmar.io/newsletter>; rel="canonical", <https://datasketch.caesarmar.io/llms.txt>; rel="describedby"; type="text/markdown"
+
+/privacy
+  Link: <https://datasketch.caesarmar.io/privacy>; rel="canonical", <https://datasketch.caesarmar.io/llms.txt>; rel="describedby"; type="text/markdown", <https://datasketch.caesarmar.io/privacy/index.md>; rel="alternate"; type="text/markdown"
+
+/privacy/index.md
+  Content-Type: text/markdown; charset=utf-8
+  X-Robots-Tag: noindex, follow
+  Link: <https://datasketch.caesarmar.io/privacy>; rel="canonical", <https://datasketch.caesarmar.io/llms.txt>; rel="describedby"; type="text/markdown"
+
 /sketches/backfill-playbook/
   Link: <https://datasketch.caesarmar.io/sketches/backfill-playbook/>; rel="canonical", <https://datasketch.caesarmar.io/llms.txt>; rel="describedby"; type="text/markdown", <https://datasketch.caesarmar.io/sketches/backfill-playbook/index.md>; rel="alternate"; type="text/markdown"
 

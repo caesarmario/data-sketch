@@ -12,6 +12,9 @@ function editorialDate(value, label) {
 // Publication months and filesystem/Git timestamps do not describe editorial changes.
 export function calculateRouteLastmod(route, sketches, galleryUpdated) {
   const published = sketches.filter(sketch => sketch.status === 'published');
+  if (route.kind === 'newsletter' || route.kind === 'privacy') {
+    return editorialDate(route.modifiedAt, route.kind);
+  }
   if (route.kind === 'lesson') {
     const sketch = published.find(entry => entry.id === route.episodeId);
     if (!sketch) throw new Error(`Published episode ${route.episodeId} is missing`);

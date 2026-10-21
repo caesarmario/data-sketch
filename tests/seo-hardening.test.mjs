@@ -20,7 +20,7 @@ const schemaGraph = head => JSON.parse(head.match(/<script type="application\/ld
 
 test('editorial dates describe website updates without changing publication months', () => {
   for (const sketch of sketches.filter(entry => entry.status === 'published')) {
-    assert.equal(sketch.modifiedAt, sketch.id <= 4 ? '2026-10-07' : '2026-10-19');
+    assert.equal(sketch.modifiedAt, '2026-10-21');
     assert.match(sketch.dateTime, /^\d{4}-\d{2}$/);
     const route = lessons.find(entry => entry.episodeId === sketch.id);
     assert.equal(routeLastmod(route), sketch.modifiedAt);
@@ -32,14 +32,14 @@ test('editorial dates describe website updates without changing publication mont
 
 test('updating one episode changes only its lesson and the gallery lastmod', () => {
   const before = routeManifest.map(route => calculateRouteLastmod(route, sketches, siteConfig.contentUpdated));
-  const changed = sketches.map(sketch => sketch.id === 9 ? { ...sketch, modifiedAt: '2026-10-20' } : sketch);
+  const changed = sketches.map(sketch => sketch.id === 9 ? { ...sketch, modifiedAt: '2026-10-22' } : sketch);
   const after = routeManifest.map(route => calculateRouteLastmod(route, changed, siteConfig.contentUpdated));
   assert.deepEqual(routeManifest.filter((route, index) => before[index] !== after[index]).map(route => route.path), ['/', '/sketches/partitioning/']);
   for (const lesson of lessons) {
     assert.equal(calculateRouteLastmod(lesson, sketches, '2026-10-21'), routeLastmod(lesson));
   }
   const futureTeaser = [...sketches, { id: 12, status: 'upcoming', modifiedAt: '2099-01-01' }];
-  assert.equal(calculateRouteLastmod(gallery, futureTeaser, siteConfig.contentUpdated), '2026-10-19');
+  assert.equal(calculateRouteLastmod(gallery, futureTeaser, siteConfig.contentUpdated), '2026-10-21');
 });
 
 test('editorial dates fail closed for missing, impossible or imprecise values', () => {
@@ -69,8 +69,8 @@ test('gallery configuration supplies the intro and all metadata descriptions', (
 
 test('image sitemap retains discovery without deprecated caption tags', () => {
   const xml = generateFiles()['sitemap.xml'];
-  assert.equal((xml.match(/<loc>/g) ?? []).length, 10);
-  assert.equal((xml.match(/<image:loc>/g) ?? []).length, 18);
+  assert.equal((xml.match(/<loc>/g) ?? []).length, 12);
+  assert.equal((xml.match(/<image:loc>/g) ?? []).length, 20);
   assert.ok(!xml.includes('<image:caption>'));
   for (const lesson of lessons) {
     assert.ok(xml.includes(`<loc>${siteConfig.baseUrl}${lesson.path}</loc><lastmod>${routeLastmod(lesson)}</lastmod>`));

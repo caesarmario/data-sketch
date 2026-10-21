@@ -1,5 +1,6 @@
 // @ts-check
 import { siteConfig } from './site.config.mjs';
+import { newsletterConfig } from './newsletter.config.mjs';
 
 /**
  * @typedef {object} GalleryRoute
@@ -22,7 +23,17 @@ import { siteConfig } from './site.config.mjs';
  * @property {string} markdownPath
  * @property {string} markdownOutput
  *
- * @typedef {GalleryRoute | LessonRoute} SiteRoute
+ * @typedef {object} InformationRoute
+ * @property {'newsletter' | 'privacy'} kind
+ * @property {string} path
+ * @property {string} output
+ * @property {string} title
+ * @property {string} description
+ * @property {string} markdownPath
+ * @property {string} markdownOutput
+ * @property {string} modifiedAt
+ *
+ * @typedef {GalleryRoute | LessonRoute | InformationRoute} SiteRoute
  */
 
 /** @type {readonly SiteRoute[]} */
@@ -35,6 +46,26 @@ export const routeManifest = Object.freeze([
     markdownOutput: 'index.md',
     title: siteConfig.title,
     description: siteConfig.description,
+  },
+  {
+    kind: 'newsletter',
+    path: newsletterConfig.path,
+    output: 'newsletter.html',
+    title: newsletterConfig.title,
+    description: newsletterConfig.description,
+    markdownPath: '/newsletter/index.md',
+    markdownOutput: 'newsletter/index.md',
+    modifiedAt: newsletterConfig.modifiedAt,
+  },
+  {
+    kind: 'privacy',
+    path: newsletterConfig.privacyPath,
+    output: 'privacy.html',
+    title: 'Newsletter Privacy | Data Sketch',
+    description: 'How Mario Caesar and beehiiv handle Data Sketch newsletter subscriptions, cookies, and your privacy choices.',
+    markdownPath: '/privacy/index.md',
+    markdownOutput: 'privacy/index.md',
+    modifiedAt: newsletterConfig.modifiedAt,
   },
   {
     kind: 'lesson',
@@ -140,6 +171,13 @@ export const routeManifest = Object.freeze([
 /** @type {ReadonlyMap<string, string>} */
 export const routeAliases = new Map([
   ['/index.html', '/'],
+  ...routeManifest
+    .filter(route => route.kind === 'newsletter' || route.kind === 'privacy')
+    .flatMap(route => /** @type {[string, string][]} */ ([
+      [`${route.path}/`, route.path],
+      [`${route.path}.html`, route.path],
+      [`${route.path}/index.html`, route.path],
+    ])),
   ...routeManifest
     .filter(route => route.kind === 'lesson')
     .flatMap(route => /** @type {[string, string][]} */ ([

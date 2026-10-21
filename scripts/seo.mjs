@@ -1,5 +1,6 @@
 import { fileURLToPath } from 'node:url';
 import { siteConfig } from '../site.config.mjs';
+import { newsletterConfig } from '../newsletter.config.mjs';
 import { routeAliases, routeManifest } from '../site.routes.mjs';
 import { loadTypeScriptModule } from './load-typescript-module.mjs';
 import { calculateRouteLastmod } from './content-dates.mjs';
@@ -101,6 +102,21 @@ function routeSchema(route) {
           isPartOf: { '@id': websiteId }, hasPart: articles,
         },
         ...routeImages(route).map(imageSchema), website, person,
+      ],
+    };
+  }
+
+  if (route.kind === 'newsletter' || route.kind === 'privacy') {
+    return {
+      '@context': 'https://schema.org',
+      '@graph': [
+        {
+          '@type': 'WebPage', '@id': canonical, name: route.title,
+          description: route.description, url: canonical, dateModified: lastmod,
+          inLanguage: siteConfig.locale, author: { '@id': personId },
+          isPartOf: { '@id': websiteId },
+        },
+        website, person,
       ],
     };
   }
@@ -218,7 +234,20 @@ function renderLlms() {
   const lessons = routeManifest.filter(route => route.kind === 'lesson')
     .map(route => `- [${route.title.replace(' | Data Sketch', '')}](${absoluteUrl(route.markdownPath)}): ${route.description}`)
     .join('\n');
-  return `# Data Sketch\n\n> ${siteConfig.description}\n\nCanonical site: ${siteConfig.baseUrl}/. Use the lesson sources below for factual summaries. Upcoming episodes are not published sources.\n\n## Primary pages\n\n- [Data Sketch gallery](${siteConfig.baseUrl}/index.md): Published lesson index and original source links.\n${lessons}\n\n## Author source\n\n- [Mario Caesar portfolio](${siteConfig.portfolioUrl}/index.md): Public professional background and attribution source.\n`;
+  return `# Data Sketch\n\n> ${siteConfig.description}\n\nCanonical site: ${siteConfig.baseUrl}/. Use the lesson sources below for factual summaries. Upcoming episodes are not published sources.\n\n## Primary pages\n\n- [Data Sketch gallery](${siteConfig.baseUrl}/index.md): Published lesson index and original source links.\n- [Newsletter](${siteConfig.baseUrl}/newsletter/index.md): Signup information and email frequency.\n- [Newsletter privacy](${siteConfig.baseUrl}/privacy/index.md): Subscription data and privacy choices.\n${lessons}\n\n## Author source\n\n- [Mario Caesar portfolio](${siteConfig.portfolioUrl}/index.md): Public professional background and attribution source.\n`;
+}
+
+function renderInformationMarkdown(route) {
+  if (route.kind === 'newsletter') {
+    const samples = newsletterConfig.sampleEpisodeIds.map(id => {
+      const sketch = publishedSketches.find(entry => entry.id === id);
+      if (!sketch) throw new Error(`Newsletter sample episode ${id} is missing`);
+      return `- [${sketch.title}](${absoluteUrl(sketch.lessonPath)})`;
+    }).join('\n');
+    return `# ${newsletterConfig.heading}\n\n> ${newsletterConfig.description}\n\nCanonical page: ${absoluteUrl(route.path)}\n\n${newsletterConfig.intro} You can unsubscribe at any time.\n\n[Subscribe](${absoluteUrl(route.path)}) | [Open the signup form](${newsletterConfig.formUrl})\n\n## A look inside the sketchbook\n\n${samples}\n\nWritten by [Mario Caesar](${siteConfig.portfolioUrl}/).\n\n[Newsletter privacy](${absoluteUrl(newsletterConfig.privacyPath)})\n`;
+  }
+  const sections = newsletterConfig.privacySections.map(section => `## ${section.heading}\n\n${section.body}`).join('\n\n');
+  return `# Newsletter privacy\n\nCanonical page: ${absoluteUrl(route.path)}\n\nUpdated: ${newsletterConfig.modifiedAt}\n\n${sections}\n\n## Contact and provider policies\n\n- [Contact Mario](mailto:${newsletterConfig.contact})\n- [beehiiv privacy policy](https://www.beehiiv.com/privacy)\n- [Cloudflare privacy policy](https://www.cloudflare.com/privacypolicy/)\n`;
 }
 
 function renderGalleryMarkdown() {
@@ -263,7 +292,7 @@ function renderSitemap(preview) {
 }
 
 export function generateFiles({ preview = false } = {}) {
-  const netlifyAliases = [...routeAliases.entries()].filter(([from]) => from === '/index.html' || from.endsWith('/index.html'));
+  const netlifyAliases = [...routeAliases.entries()].filter(([from]) => from.endsWith('.html') || from === '/newsletter/' || from === '/privacy/');
   const redirects = [...netlifyAliases.map(([from, to]) => `${from} ${to} 301!`), '/404.html /404.html 404!', '/* /404.html 404'].join('\n') + '\n';
   const files = {
     'sitemap.xml': renderSitemap(preview),
@@ -276,5 +305,6 @@ export function generateFiles({ preview = false } = {}) {
     [rootRoute.markdownOutput]: renderGalleryMarkdown(),
   };
   for (const route of routeManifest.filter(entry => entry.kind === 'lesson')) files[route.markdownOutput] = renderLessonMarkdown(route);
+  for (const route of routeManifest.filter(entry => entry.kind === 'newsletter' || entry.kind === 'privacy')) files[route.markdownOutput] = renderInformationMarkdown(route);
   return files;
 }
