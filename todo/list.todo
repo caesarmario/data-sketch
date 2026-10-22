@@ -182,3 +182,19 @@ NEWSLETTER WORDING - 2026-10-22 (ASIA/JAKARTA)
 [x] Retain v2026.10.22 and newsletter modifiedAt: this is the same Jakarta
     development date. Privacy, lessons, gallery and beehiiv settings are unchanged.
 [ ] Existing beehiiv builder and production release gates above still apply.
+
+CONSOLE GREETING - 2026-10-22 (ASIA/JAKARTA)
+------------------------------------------
+[x] Add the approved "Read between the boxes." console note, pipeline diagram
+    and original developer ASCII signature. Keep page styling and content intact.
+[x] Print once per document; verify state updates, module reevaluation, repeated
+    calls and reload behavior. Full document navigation prints once on arrival.
+[x] Typecheck, lint, 28 existing tests, build, SEO and dev/preview HTTP checks pass.
+[x] Browser copy, ASCII, CSS arguments and native warn/error behavior verified;
+    no uncaught JavaScript errors. Server import/invocation stays silent.
+[x] Retain build v2026.10.22 for the same Jakarta development date; keep sitemap
+    and editorial dates intact. Evidence and behavior: docs/console-greeting.md.
+[ ] Inspect native DevTools in dark/light themes: its internal URL is blocked
+    by environment policy, so visual rendering could not be verified here.
+[ ] Existing beehiiv builder, signup and owner-approved production release gates
+    remain applicable. No production deployment is part of this console change.
