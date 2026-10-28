@@ -93,11 +93,12 @@ test('released JPEG derivatives remain 1080 by 1350 and below 200 KB', () => {
   }
 });
 
-test('sorting remains deterministic and does not mutate episode data', () => {
-  assert.deepEqual(data.sortSketches(data.sketches, 'latest').map(sketch => sketch.id), [11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1]);
+test('sorting orders published episodes and keeps upcoming episodes last without mutating data', () => {
+  const originalIds = data.sketches.map(sketch => sketch.id);
+  assert.deepEqual(data.sortSketches(data.sketches, 'latest').map(sketch => sketch.id), [9, 8, 7, 6, 5, 4, 3, 2, 1, 10, 11]);
   assert.deepEqual(data.sortSketches(data.sketches, 'oldest').map(sketch => sketch.id), [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]);
   assert.deepEqual(data.sortSketches([], 'oldest'), []);
-  assert.equal(data.sketches[0].id, 1);
+  assert.deepEqual(data.sketches.map(sketch => sketch.id), originalIds);
 });
 
 test('typed route manifest exposes the gallery, nine lessons, newsletter and privacy', () => {
@@ -225,7 +226,7 @@ test('shared utilities expose the configured build and accessible controls', asy
   const { render } = await server.ssrLoadModule('/src/entry-server.tsx');
   const html = render('/');
   assert.equal(siteConfig.version, '1.0.2');
-  assert.equal(siteConfig.buildVersion, 'v2026.10.22');
+  assert.equal(siteConfig.buildVersion, 'v2026.10.28');
   assert.ok(html.includes('aria-label="Site information"'));
   assert.ok(html.includes('href="/humans.txt"'));
   assert.ok(html.includes('href="/llms.txt"'));

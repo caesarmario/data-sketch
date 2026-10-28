@@ -198,3 +198,17 @@ CONSOLE GREETING - 2026-10-22 (ASIA/JAKARTA)
     by environment policy, so visual rendering could not be verified here.
 [ ] Existing beehiiv builder, signup and owner-approved production release gates
     remain applicable. No production deployment is part of this console change.
+
+GALLERY SORTING - 2026-10-28 (ASIA/BANGKOK)
+-----------------------------------------
+[x] Sort published episodes only; keep Upcoming in source order at the end.
+    Latest first: 09 through 01, then 10 and 11. Episode order stays 01 through 11.
+[x] Update the existing sorting regression and verify full source-order
+    immutability. The regression fails before the fix and passes afterward.
+[x] Typecheck, lint, build, all 28 tests, SEO and dev/preview HTTP checks pass.
+[x] Chromium at 375 and 1440 px: mouse, Enter and Space toggle sorting correctly;
+    active states update, teaser DOM nodes remain intact, and no overflow or
+    uncaught errors occur. No-JavaScript prerendering still contains 11 cards.
+[x] Update build label to v2026.10.28 and regenerate humans.txt. Preserve the
+    existing theme, episode dates, editorial dates, metadata and sitemap.
+[ ] Merge/deploy only after a separate owner instruction.

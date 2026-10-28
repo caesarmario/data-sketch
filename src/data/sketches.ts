@@ -35,7 +35,11 @@ export type Sketch = {
 export type SortOrder = 'oldest' | 'latest';
 
 export function sortSketches(entries: readonly Sketch[], order: SortOrder) {
-  return [...entries].sort((a, b) => order === 'latest' ? b.id - a.id : a.id - b.id);
+  const published = entries
+    .filter(sketch => sketch.status === 'published')
+    .sort((a, b) => order === 'latest' ? b.id - a.id : a.id - b.id);
+  const upcoming = entries.filter(sketch => sketch.status === 'upcoming');
+  return [...published, ...upcoming];
 }
 
 export const sketches: Sketch[] = [
