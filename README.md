@@ -42,7 +42,7 @@ the optional legacy migration checks are outside its scope.
 - React + TypeScript + Vite + Tailwind, with locally served IBM Plex Sans and Space Grotesk.
 - `src/data/sketches.ts` owns episode content. Published entries require an image, local lesson path and LinkedIn URL; upcoming entries cannot reference an unreleased asset or live link.
 - `site.routes.mjs` is the typed public-route manifest used by rendering, metadata, sitemap and delivery rules. The site prerenders the gallery and nine published lesson pages.
-- One responsive DOM grid, accessible sort controls, noninteractive upcoming episodes, and CSS-only motion.
+- One responsive DOM grid, accessible sort controls, noninteractive upcoming episodes, CSS interaction motion, and deferred ASCII loading for non-priority preview images. See [preview loading](docs/ascii-preview-loading.md).
 - `src/entry-server.tsx` renders each manifest route during the build; `src/main.tsx` hydrates the matching page. No server runtime is deployed.
 - `site.config.mjs` owns site identity and SEO values. `scripts/seo.mjs` adapts the portfolio's metadata, escaping, and generated routing/header patterns.
 - `public/` contains only Data Sketch assets, fonts, favicon, OG artwork and generated SEO files. There is no Supabase, resume, PDF viewer, affiliate banner, or authentication dependency.
@@ -52,7 +52,7 @@ the optional legacy migration checks are outside its scope.
 1. Add only the released image under `public/images/data-sketch/` with a descriptive lowercase filename. Keep unreleased images outside the repo's public directory.
 2. Change the corresponding data entry to `status: 'published'` and provide its final metadata, alt text, image and LinkedIn URL. Preserve the episode ID.
 3. Add the published lesson copy and route metadata without inventing details that are absent from the diagram or source caption. Set the episode's `modifiedAt` to the website editorial update date, separately from its publication month. Update `contentUpdated` for gallery changes, regenerate SEO and run all checks.
-4. Verify the diagram is readable, fully visible and keyboard-accessible at mobile, tablet and desktop sizes. Default episode ordering is ascending; latest-first includes upcoming IDs, matching the previous gallery.
+4. Verify the diagram is readable, fully visible and keyboard-accessible at mobile, tablet and desktop sizes. Default episode ordering is ascending; latest-first sorts published episodes descending and keeps upcoming episodes at the end.
 
 The topic filter intentionally remains off. Do not introduce a CMS, lightbox or GSAP without a separate brief.
 

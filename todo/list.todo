@@ -212,3 +212,16 @@ GALLERY SORTING - 2026-10-28 (ASIA/BANGKOK)
 [x] Update build label to v2026.10.28 and regenerate humans.txt. Preserve the
     existing theme, episode dates, editorial dates, metadata and sitemap.
 [ ] Merge/deploy only after a separate owner instruction.
+
+ASCII PREVIEW LOADING - 2026-10-29 (ASIA/JAKARTA)
+------------------------------------------------
+[x] Pin ascii-reveal 0.3.0; add Dither skeleton + Fast Decode for pending,
+    non-priority published gallery previews. No mascot or theme/font change.
+[x] Keep SSR/native/cached/priority images readable; preserve Upcoming teasers,
+    sorting keys/order, links, alt text, diagram bytes and editorial dates.
+[x] Add eight lifecycle regressions: 36 tests pass, plus typecheck, lint, build,
+    SEO and dev/preview HTTP checks. Portfolio's corresponding 128 tests pass.
+[x] Check slow/failed images, late chunks, timeout, reduced motion and no JS in
+    Chromium at mobile/desktop widths; record scope and evidence in
+    docs/ascii-preview-loading.md. Public build label is v2026.10.29.
+[ ] Main merge and production deploy require a separate owner instruction.

@@ -1,14 +1,14 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { ArrowUpRight } from 'lucide-react';
 import type { Sketch } from '../data/sketches';
+import { useAsciiImage } from '../hooks/useAsciiImage';
 
 export default function SketchCard({ sketch, priority }: { sketch: Sketch; priority: boolean }) {
-  const [failed, setFailed] = useState(false);
-  const imageRef = useRef<HTMLImageElement>(null);
-  useEffect(() => {
-    // An SSR image can fail before hydration attaches its error listener.
-    if (imageRef.current?.complete && imageRef.current.naturalWidth === 0) setFailed(true);
-  }, []);
+  const src = sketch.status === 'published' ? sketch.image : undefined;
+  const [failedSrc, setFailedSrc] = useState<string>();
+  const unavailable = useCallback(() => setFailedSrc(src), [src]);
+  const { containerRef, imageRef, placeholderRef } = useAsciiImage(src, unavailable, { priority });
+  const failed = src !== undefined && failedSrc === src;
   const number = String(sketch.id).padStart(2, '0');
 
   if (sketch.status === 'upcoming') {
@@ -32,14 +32,15 @@ export default function SketchCard({ sketch, priority }: { sketch: Sketch; prior
   return (
     <article className="sketch-card sketch-card-live">
       <a className="card-link" href={sketch.href} target="_blank" rel="noopener noreferrer" aria-labelledby={`episode-${sketch.id}`}>
-        <div className="sketch-image">
+        <div ref={containerRef} className="sketch-image ascii-image" data-ascii-image="">
           {failed ? <div className="image-fallback" role="img" aria-label={sketch.imageAlt}>
             <span>Diagram preview unavailable</span><span className="text-accent">Open the original LinkedIn post <ArrowUpRight size={16} /></span>
           </div> : <img
             ref={imageRef} src={sketch.image} alt={sketch.imageAlt} width={1080} height={1350}
             loading={priority ? 'eager' : 'lazy'} {...{ fetchpriority: priority ? 'high' : 'auto' }}
-            decoding="async" onError={() => setFailed(true)}
+            decoding="async"
           />}
+          <div ref={placeholderRef} className="ascii-image-placeholder" hidden aria-hidden="true" />
         </div>
         <div className="card-copy">
           <p className="card-meta">Episode {number}<span aria-hidden="true">/</span>{sketch.date}</p>

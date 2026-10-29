@@ -2,7 +2,7 @@ export const siteConfig = {
   name: 'Data Sketch',
   author: 'Mario Caesar',
   version: '1.0.2',
-  buildVersion: 'v2026.10.28',
+  buildVersion: 'v2026.10.29',
   baseUrl: 'https://datasketch.caesarmar.io',
   portfolioUrl: 'https://caesarmar.io',
   title: 'Data Sketch | Data Engineering Lessons by Mario Caesar',

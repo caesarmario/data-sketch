@@ -1,0 +1,37 @@
+/* Preview-only enhancement; the native image remains in server-rendered HTML. */
+.ascii-image {
+  position: relative;
+  isolation: isolate;
+  --ascii-accent: hsl(var(--accent));
+  --ascii-skeleton: hsl(var(--muted-foreground) / .7);
+  --ascii-glyph: hsl(var(--accent) / .55);
+  --ascii-font: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  --ascii-surface: hsl(var(--background));
+}
+
+.ascii-image-placeholder {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  overflow: hidden;
+  background: hsl(var(--background));
+  font-size: 12px;
+  line-height: 14px;
+  pointer-events: none;
+}
+
+.ascii-image-placeholder[hidden] { display: none; }
+.ascii-image-placeholder > .ars,
+.ascii-image-placeholder .ars-block { width: 100%; height: 100%; border-radius: 0; }
+.ascii-image-placeholder .ars-block { line-height: 14px; }
+
+.ascii-image-fallback {
+  display: grid;
+  width: 100%;
+  height: 100%;
+  place-items: center;
+  padding: 1rem;
+  color: hsl(var(--muted-foreground));
+  font-size: .875rem;
+  text-align: center;
+}
