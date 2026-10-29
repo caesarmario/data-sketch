@@ -10,13 +10,11 @@ const loadLibrary = () => libraryPromise ??= import('ascii-reveal');
 export function useAsciiImage(
   src: string | undefined,
   onUnavailable: () => void,
-  { srcSet, sizes, priority = false }: { srcSet?: string; sizes?: string; priority?: boolean } = {},
+  { srcSet, sizes }: { srcSet?: string; sizes?: string } = {},
 ) {
   const containerRef = useRef<HTMLDivElement>(null);
   const imageRef = useRef<HTMLImageElement>(null);
   const placeholderRef = useRef<HTMLDivElement>(null);
-  // Sorting may change fetch priority later; it must not change animation eligibility.
-  const initialPriority = useRef(priority);
 
   useEffect(() => {
     const root = containerRef.current;
@@ -28,7 +26,7 @@ export function useAsciiImage(
     const seen = revealedByDocument.get(doc) ?? new Set<string>();
     revealedByDocument.set(doc, seen);
     const key = JSON.stringify([window.location.pathname, src, srcSet ?? '']);
-    if (initialPriority.current || !('IntersectionObserver' in window)) {
+    if (!('IntersectionObserver' in window)) {
       seen.add(key);
       const failed = () => onUnavailable();
       image.addEventListener('error', failed);
@@ -73,7 +71,7 @@ export function useAsciiImage(
       seen.add(key);
       try {
         const run = library.createAsciiReveal(root, {
-          selector: 'img', media: 'img', preset: 'decode', duration: 'fast',
+          selector: 'img', media: 'img', preset: 'decode', duration: 'cinematic', speed: 1.8,
           origin: 'top-left', mascot: null, lazy: false, fallback: true,
         });
         controller = run;

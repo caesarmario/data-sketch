@@ -40,9 +40,9 @@ function harness({ complete = false, valid = true, reduced = false, options = {}
   const library = {
     asciiSkeletonHTML: () => { stats.skeletons++; return '<span data-ascii-skeleton></span>'; },
     animateSkeletons: () => { stats.shimmering++; return () => { stats.shimmering--; }; },
-    createAsciiReveal: () => {
+    createAsciiReveal: (_root, config) => {
       const done = deferred();
-      const run = { done, disposed: false,
+      const run = { done, config, disposed: false,
         reveal: () => { stats.reveals++; image.masked = true; return done.promise; },
         destroy: () => {
           if (run.disposed) return;
@@ -100,11 +100,11 @@ function harness({ complete = false, valid = true, reduced = false, options = {}
 
 async function finish(h) { h.runs.at(-1).done.resolve(); await flush(); }
 
-test('SSR and initial priority media stay native without importing animation', async () => {
+test('SSR and browsers without observers keep native media', async () => {
   const server = harness();
   assert.equal(server.stats.imports, 0); assert.equal(server.attrs.size, 0);
   assert.equal(server.placeholder.hidden, true);
-  for (const config of [{ options: { priority: true } }, { observe: false }]) {
+  for (const config of [{ observe: false }]) {
     const h = harness(config); h.mount(); h.approach(); h.enter(); await flush();
     assert.equal(h.stats.imports, 0); assert.equal(h.image.masked, false);
     assert.equal(h.timers.size, 0); h.unmount();
@@ -158,13 +158,21 @@ test('scroll, effect replay, filter remount and size changes cannot replay the s
   assert.equal(h.stats.reveals, 1); assert.equal(h.image.masked, false); h.unmount();
 });
 
-test('sorting priority changes do not reclassify an initially non-priority preview', async () => {
+test('fetch priority never excludes episode 01 or resets a consumed reveal after sorting', async () => {
   const h = harness({ complete: true }); h.mount(); h.updateOptions({ priority: true });
   h.approach(); await h.moduleReady(); h.enter();
   assert.equal(h.stats.reveals, 1); await finish(h); h.unmount();
   const first = harness({ complete: true, options: { priority: true } }); first.mount();
-  first.updateOptions({ priority: false }); first.approach(); await first.moduleReady(); first.enter();
-  assert.equal(first.stats.reveals, 0); first.unmount();
+  first.approach(); await first.moduleReady(); first.enter();
+  assert.equal(first.stats.reveals, 1);
+  assert.equal(first.runs[0].config.preset, 'decode');
+  assert.equal(first.runs[0].config.origin, 'top-left');
+  assert.equal(first.runs[0].config.speed, 1.8);
+  assert.equal(first.runs[0].config.duration, 'cinematic');
+  assert.equal(first.runs[0].config.mascot, null);
+  await finish(first);
+  first.updateOptions({ priority: false }); first.approach(); first.enter();
+  assert.equal(first.stats.reveals, 1); first.unmount();
 });
 
 test('a genuinely different source gets its own first reveal; unmount restores a playing image', async () => {

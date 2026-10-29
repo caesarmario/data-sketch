@@ -249,3 +249,24 @@ CACHED VIEWPORT REVEAL - 2026-10-29 (ASIA/JAKARTA)
     docs/ascii-preview-loading.md and its current-machine evidence directory.
 [x] Keep v2026.10.29 for the same development date; retain public/editorial data.
 [ ] Merge to main and deploy only after a new owner release instruction.
+
+ASCII MOTION REFINEMENT - 2026-10-29 (ASIA/JAKARTA)
+-------------------------------------------------
+[x] Include episode 01 in gallery Decode; preserve eager/high fetch priority.
+    Episodes 01-09 use top-left corner, cinematic base duration, speed 1.8x,
+    no mascot, and one reveal per document/route/source, including cache.
+[x] Portfolio uses static ASCII Dither loading feedback and a single 180ms
+    overlay fade. Never hide an already-painted image for a delayed reveal.
+    Keep one native image element; offscreen duplicates cannot consume a
+    visible card transition. Preserve themes, fonts, data, routing and SEO.
+[x] Regression fails on the former priority bypass; lifecycle and complete
+    suites pass: 42 Data Sketch + 136 portfolio tests. Required typechecks,
+    lint, builds, SEO and portfolio campaign checks pass.
+[x] All 26 Chromium cases pass, including mobile/desktop, cache, actual painted
+    episode-01/02 glyphs, monotonic portfolio fade, delayed hydration/decoding,
+    sorting/filtering, failures, reduced motion and native no-JS images.
+[x] Data Sketch dev/preview HTTP smoke and portfolio preview handoffs/routes
+    pass. Lab CLS unchanged; portfolio total JS is 15,896 gzip bytes smaller.
+    Details and limits: docs/ascii-preview-loading.md.
+[x] Retain v2026.10.29 for the same development date and preserve editorial dates.
+[ ] Release this refinement to main/production only after a new owner instruction.

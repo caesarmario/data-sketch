@@ -7,7 +7,8 @@ export default function SketchCard({ sketch, priority }: { sketch: Sketch; prior
   const src = sketch.status === 'published' ? sketch.image : undefined;
   const [failedSrc, setFailedSrc] = useState<string>();
   const unavailable = useCallback(() => setFailedSrc(src), [src]);
-  const { containerRef, imageRef, placeholderRef } = useAsciiImage(src, unavailable, { priority });
+  // Download priority does not change whether a published preview can reveal.
+  const { containerRef, imageRef, placeholderRef } = useAsciiImage(src, unavailable);
   const failed = src !== undefined && failedSrc === src;
   const number = String(sketch.id).padStart(2, '0');
 
