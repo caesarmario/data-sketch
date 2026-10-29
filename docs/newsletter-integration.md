@@ -61,3 +61,17 @@ vendor limitation and remaining consent/placeholder settings in the builder guid
 Production deployment, actual Netlify headers/clean URLs, and the subscription
 email flow still require release verification. Keep production `main` unchanged
 until the owner instructs otherwise.
+
+## Netlify routing correction — 29 October 2026
+
+After the owner authorized the main release, production verification exposed a
+self-redirect at `/newsletter` and `/privacy`. Netlify matches trailing-slash
+variants as the same path, so forced `/newsletter/ -> /newsletter` and
+`/privacy/ -> /privacy` rules also matched their own destinations.
+
+The generator now omits slash-only aliases from Netlify output, as it already
+does for lesson URLs. Explicit HTML aliases stay permanent redirects; local
+Vite aliases, canonical URLs, metadata, page content and build date stay intact.
+A regression fails on the old output and passes after the correction. Typecheck,
+lint, build, all 37 tests and SEO checks passed. Verify canonical pages, HTML
+aliases, Markdown headers and the actual 404 again after this deployment.

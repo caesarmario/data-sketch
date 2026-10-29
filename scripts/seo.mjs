@@ -292,7 +292,9 @@ function renderSitemap(preview) {
 }
 
 export function generateFiles({ preview = false } = {}) {
-  const netlifyAliases = [...routeAliases.entries()].filter(([from]) => from.endsWith('.html') || from === '/newsletter/' || from === '/privacy/');
+  // Netlify matches slash variants as the same URL. A forced slash-only alias
+  // would also match its canonical destination and create a redirect loop.
+  const netlifyAliases = [...routeAliases.entries()].filter(([from]) => from.endsWith('.html'));
   const redirects = [...netlifyAliases.map(([from, to]) => `${from} ${to} 301!`), '/404.html /404.html 404!', '/* /404.html 404'].join('\n') + '\n';
   const files = {
     'sitemap.xml': renderSitemap(preview),

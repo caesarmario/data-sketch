@@ -225,3 +225,13 @@ ASCII PREVIEW LOADING - 2026-10-29 (ASIA/JAKARTA)
     Chromium at mobile/desktop widths; record scope and evidence in
     docs/ascii-preview-loading.md. Public build label is v2026.10.29.
 [ ] Main merge and production deploy require a separate owner instruction.
+
+MAIN RELEASE ROUTING - 2026-10-29 (ASIA/JAKARTA)
+------------------------------------------------
+[x] Owner authorized merging both newsletter development branches into main.
+[x] Initial Data Sketch main merge passed GitHub CI; production then exposed
+    slash-normalized self-redirects on newsletter/privacy, which local Vite
+    routing did not reproduce. Remove only the forced slash aliases.
+[x] Add a regression that fails on the previous Netlify output; typecheck,
+    lint, build, 37 tests and SEO checks pass. Canonical/content/version intact.
+    Production verification evidence is retained separately for this release.

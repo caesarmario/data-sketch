@@ -13,7 +13,8 @@ test('signup and privacy pages have canonical aliases, Markdown and WebPage meta
     assert.ok(route);
     for (const alias of [`${path}/`, `${path}.html`, `${path}/index.html`]) {
       assert.equal(routeAliases.get(alias), path);
-      assert.ok(files['_redirects'].includes(`${alias} ${path} 301!`));
+      // Netlify normalizes slash variants before matching its redirect rules.
+      assert.equal(files['_redirects'].includes(`${alias} ${path} 301!`), alias.endsWith('.html'));
     }
     const head = renderHead({ route, preview: false });
     assert.ok(head.includes(`rel="canonical" href="${siteConfig.baseUrl}${path}"`));
@@ -22,6 +23,16 @@ test('signup and privacy pages have canonical aliases, Markdown and WebPage meta
     assert.ok(!graph.some(entry => entry['@type'] === 'Article'));
     assert.ok(files[route.markdownOutput].includes(`Canonical page: ${siteConfig.baseUrl}${path}`));
     assert.ok(renderHead({ route, preview: true }).includes('noindex, nofollow'));
+  }
+});
+
+test('Netlify slash normalization never turns a canonical page into a redirect to itself', () => {
+  const normalize = pathname => pathname.replace(/\/+$/, '') || '/';
+  const redirects = generateFiles()['_redirects'].trim().split('\n');
+  for (const line of redirects) {
+    const [from, to, status] = line.split(/\s+/);
+    if (status !== '301!') continue;
+    assert.notEqual(normalize(from), normalize(to), `Netlify would self-redirect: ${line}`);
   }
 });
 
