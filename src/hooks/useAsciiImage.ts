@@ -1,7 +1,12 @@
 import { useEffect, useRef } from 'react';
 import type { AsciiRevealController } from 'ascii-reveal';
 
-/** Enhance genuinely pending images; SSR and cache hits keep the native image. */
+type AsciiLibrary = typeof import('ascii-reveal');
+const revealedByDocument = new WeakMap<Document, Set<string>>();
+let libraryPromise: Promise<AsciiLibrary> | undefined;
+const loadLibrary = () => libraryPromise ??= import('ascii-reveal');
+
+/** Real loading feedback plus one viewport reveal, including cached previews. */
 export function useAsciiImage(
   src: string | undefined,
   onUnavailable: () => void,
@@ -10,62 +15,62 @@ export function useAsciiImage(
   const containerRef = useRef<HTMLDivElement>(null);
   const imageRef = useRef<HTMLImageElement>(null);
   const placeholderRef = useRef<HTMLDivElement>(null);
+  // Sorting may change fetch priority later; it must not change animation eligibility.
+  const initialPriority = useRef(priority);
 
   useEffect(() => {
     const root = containerRef.current;
     const image = imageRef.current;
     const placeholder = placeholderRef.current;
     if (!src || !root || !image || !placeholder) return;
-    // A priority/LCP image keeps its native rendering and never waits for an effect.
-    if (priority) {
+
+    const doc = root.ownerDocument;
+    const seen = revealedByDocument.get(doc) ?? new Set<string>();
+    revealedByDocument.set(doc, seen);
+    const key = JSON.stringify([window.location.pathname, src, srcSet ?? '']);
+    if (initialPriority.current || !('IntersectionObserver' in window)) {
+      seen.add(key);
       const failed = () => onUnavailable();
       image.addEventListener('error', failed);
       if (image.complete && image.naturalWidth === 0) failed();
       return () => image.removeEventListener('error', failed);
     }
 
-    let active = true;
-    let pending = false;
-    let settled = false;
-    let deadline = 0;
-    let animationDeadline = 0;
-    let library: typeof import('ascii-reveal') | undefined;
+    let active = true, ready = false, unavailable = false;
+    let near = false, visible = false, prepared = false, moduleFailed = false;
+    let skeletonShown = false;
+    let deadline = 0, animationDeadline = 0;
+    let library: AsciiLibrary | undefined;
     let controller: AsciiRevealController | undefined;
     let stopSkeleton: (() => void) | undefined;
-    let observer: IntersectionObserver | undefined;
+    let preloadObserver: IntersectionObserver | undefined;
+    let viewportObserver: IntersectionObserver | undefined;
     const motion = window.matchMedia('(prefers-reduced-motion: reduce)');
 
     const clearPlaceholder = () => {
-      stopSkeleton?.();
-      stopSkeleton = undefined;
+      stopSkeleton?.(); stopSkeleton = undefined;
       placeholder.hidden = true;
       placeholder.replaceChildren();
+      skeletonShown = false;
     };
     const stopReveal = () => {
       window.clearTimeout(animationDeadline);
-      controller?.destroy();
-      controller = undefined;
-      if (active && root.dataset.imageState === 'revealing') root.dataset.imageState = 'ready';
+      controller?.destroy(); controller = undefined;
+      if (active && ready && !unavailable) root.dataset.imageState = 'ready';
+      if (seen.has(key)) viewportObserver?.disconnect();
     };
-    const inView = () => {
-      const rect = root.getBoundingClientRect();
-      return rect.width > 0 && rect.height > 0 && rect.bottom > 0 && rect.top < window.innerHeight + 120;
+    const native = () => {
+      seen.add(key);
+      root.dataset.imageState = 'ready';
+      viewportObserver?.disconnect();
+      preloadObserver?.disconnect();
     };
-    const finish = (failed = false) => {
-      if (!active || settled) return;
-      settled = true;
-      window.clearTimeout(deadline);
-      observer?.disconnect();
-      clearPlaceholder();
-      root.removeAttribute('aria-busy');
-      root.dataset.imageState = failed ? 'unavailable' : 'ready';
-      if (failed) {
-        stopReveal();
-        onUnavailable();
-        return;
-      }
-      // Never wait for the animation chunk or replay an already painted/cached image.
-      if (!pending || !library || motion.matches || !inView()) return;
+    const revealIfReady = () => {
+      if (!active || unavailable || !ready || !visible || controller) return;
+      if (seen.has(key) || motion.matches || moduleFailed) { native(); return; }
+      // Loading the effect never hides an image. Keep the reveal queued until ready.
+      if (!library) return;
+      seen.add(key);
       try {
         const run = library.createAsciiReveal(root, {
           selector: 'img', media: 'img', preset: 'decode', duration: 'fast',
@@ -73,73 +78,107 @@ export function useAsciiImage(
         });
         controller = run;
         root.dataset.imageState = 'revealing';
-        // A visual effect must never leave a successfully loaded image hidden.
         animationDeadline = window.setTimeout(stopReveal, 1500);
         void run.reveal({ within: image }).catch(() => {}).finally(() => {
           if (controller === run) stopReveal();
         });
       } catch {
-        stopReveal();
-        root.dataset.imageState = 'ready';
+        stopReveal(); native();
       }
     };
-    const loaded = () => finish(image.naturalWidth === 0);
-    const failed = () => finish(true);
-    const activate = () => {
-      observer?.disconnect();
-      if (!active || settled) return;
-      if (image.complete) { loaded(); return; }
-      pending = true;
-      root.dataset.imageState = 'loading';
-      root.setAttribute('aria-busy', 'true');
-      deadline = window.setTimeout(failed, 15000);
-      // Deferred until a pending preview approaches the viewport; never blocks rendering.
-      void import('ascii-reveal').then(module => {
-        if (!active || settled) return;
-        library = module;
-        placeholder.innerHTML = module.asciiSkeletonHTML({
+    const showSkeleton = () => {
+      if (!active || ready || unavailable || !visible || !library || moduleFailed) return;
+      if (!skeletonShown) {
+        placeholder.innerHTML = library.asciiSkeletonHTML({
           variant: 'dither', rows: Math.max(1, Math.min(64, Math.ceil(root.clientHeight / 14))),
-          // Keep the marker so a later preference change can start the shimmer.
           animate: true,
         });
-        placeholder.hidden = false;
-        if (!motion.matches) stopSkeleton = module.animateSkeletons(placeholder);
-      }).catch(() => { if (active) clearPlaceholder(); });
+        skeletonShown = true;
+      }
+      placeholder.hidden = false;
+      if (!motion.matches && !stopSkeleton) stopSkeleton = library.animateSkeletons(placeholder);
+    };
+    const failed = () => {
+      if (!active || unavailable) return;
+      unavailable = true;
+      window.clearTimeout(deadline);
+      stopReveal(); clearPlaceholder();
+      viewportObserver?.disconnect(); preloadObserver?.disconnect();
+      root.removeAttribute('aria-busy');
+      root.dataset.imageState = 'unavailable';
+      onUnavailable();
+    };
+    const loaded = () => {
+      if (!active || unavailable || ready) return;
+      if (image.naturalWidth === 0) { failed(); return; }
+      ready = true;
+      window.clearTimeout(deadline);
+      clearPlaceholder(); root.removeAttribute('aria-busy');
+      root.dataset.imageState = 'ready';
+      revealIfReady();
+    };
+    const prepare = () => {
+      if (!active || unavailable || prepared || (ready && (seen.has(key) || motion.matches))) return;
+      prepared = true;
+      void loadLibrary().then(module => {
+        if (!active || unavailable) return;
+        library = module;
+        showSkeleton(); revealIfReady();
+      }).catch(() => {
+        if (!active) return;
+        moduleFailed = true;
+        clearPlaceholder(); revealIfReady();
+      });
     };
     const motionChanged = () => {
       if (motion.matches) {
-        stopSkeleton?.();
-        stopSkeleton = undefined;
+        stopSkeleton?.(); stopSkeleton = undefined;
         stopReveal();
-      } else if (library && pending && !settled && !placeholder.hidden) {
-        stopSkeleton = library.animateSkeletons(placeholder);
+      } else {
+        if (near) prepare();
+        showSkeleton();
       }
+      revealIfReady();
     };
 
     image.addEventListener('load', loaded);
     image.addEventListener('error', failed);
     motion.addEventListener('change', motionChanged);
     if (image.complete) loaded();
-    else if ('IntersectionObserver' in window) {
-      observer = new IntersectionObserver(entries => {
-        if (entries.some(entry => entry.isIntersecting)) activate();
-      }, { rootMargin: '120px' });
-      observer.observe(root);
-    } else activate();
+    if (!unavailable && (!ready || !seen.has(key))) {
+      // Preparation and playback have different boundaries: never spend a reveal offscreen.
+      preloadObserver = new IntersectionObserver(entries => {
+        if (!entries.some(entry => entry.isIntersecting)) return;
+        near = true; preloadObserver?.disconnect(); prepare();
+      }, { rootMargin: '600px' });
+      viewportObserver = new IntersectionObserver(([entry]) => {
+        if (!entry || !active) return;
+        visible = entry.isIntersecting && entry.intersectionRatio >= .15;
+        if (!visible) { if (controller) stopReveal(); return; }
+        near = true; prepare();
+        if (!ready && !unavailable) {
+          root.dataset.imageState = 'loading'; root.setAttribute('aria-busy', 'true');
+          if (!deadline) deadline = window.setTimeout(failed, 15000);
+          showSkeleton();
+        }
+        revealIfReady();
+      }, { threshold: .15 });
+      preloadObserver.observe(root);
+      viewportObserver.observe(root);
+    }
 
     return () => {
       active = false;
       window.clearTimeout(deadline);
-      observer?.disconnect();
+      preloadObserver?.disconnect(); viewportObserver?.disconnect();
       image.removeEventListener('load', loaded);
       image.removeEventListener('error', failed);
       motion.removeEventListener('change', motionChanged);
-      stopReveal();
-      clearPlaceholder();
+      stopReveal(); clearPlaceholder();
       root.removeAttribute('aria-busy');
       delete root.dataset.imageState;
     };
-  }, [src, srcSet, sizes, priority, onUnavailable]);
+  }, [src, srcSet, sizes, onUnavailable]);
 
   return { containerRef, imageRef, placeholderRef };
 }

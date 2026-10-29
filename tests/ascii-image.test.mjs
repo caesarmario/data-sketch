@@ -13,31 +13,29 @@ const deferred = () => {
   const promise = new Promise((yes, no) => { resolve = yes; reject = no; });
   return { promise, resolve, reject };
 };
-const flush = async () => { for (let i = 0; i < 12; i++) await Promise.resolve(); };
+const flush = async () => { for (let i = 0; i < 16; i++) await Promise.resolve(); };
 
-// Exercise the real hook with controlled network/visibility/timer boundaries.
-// Browser QA separately covers actual canvas drawing, CSS and hydration.
-function harness({ complete = false, valid = true, reduced = false, options = {} } = {}) {
+// Real hook, controlled image/module arrival and viewport events. Browser QA
+// separately verifies actual canvas frames, native cache, CSS and hydration.
+function harness({ complete = false, valid = true, reduced = false, options = {}, observe = true } = {}) {
   const image = Object.assign(new EventTarget(), { complete, naturalWidth: complete && valid ? 1080 : 0, masked: false });
   const attrs = new Map();
-  const root = { dataset: {}, clientHeight: 400,
+  const rect = { width: 320, height: 400, top: 1800, bottom: 2200 };
+  const root = { dataset: {}, clientHeight: 400, ownerDocument: {},
     setAttribute: (key, value) => attrs.set(key, value), removeAttribute: key => attrs.delete(key),
-    getBoundingClientRect: () => ({ width: 320, height: 400, top: 100, bottom: 500 }),
+    getBoundingClientRect: () => rect,
   };
   const placeholder = { hidden: true, innerHTML: '', writes: 0,
     replaceChildren() { this.innerHTML = ''; this.writes++; },
   };
   const motion = Object.assign(new EventTarget(), { matches: reduced });
-  const chunk = deferred();
-  const timers = new Map();
+  const chunk = deferred(), timers = new Map(), observers = [], runs = [];
   const stats = { imports: 0, failures: 0, skeletons: 0, shimmering: 0, reveals: 0, destroyed: 0 };
-  const runs = [];
-  let timerId = 0, intersect, install, cleanup, refIndex = 0;
-  const refs = [root, image, placeholder].map(current => ({ current }));
+  let timerId = 0, install, cleanup, refIndex = 0, refs = [];
   class Observer {
-    constructor(callback) { intersect = () => callback([{ isIntersecting: true }]); }
-    observe() {}
-    disconnect() {}
+    constructor(callback, settings = {}) { this.callback = callback; this.settings = settings; this.active = false; observers.push(this); }
+    observe() { this.active = true; }
+    disconnect() { this.active = false; }
   }
   const library = {
     asciiSkeletonHTML: () => { stats.skeletons++; return '<span data-ascii-skeleton></span>'; },
@@ -51,34 +49,46 @@ function harness({ complete = false, valid = true, reduced = false, options = {}
           run.disposed = true; stats.destroyed++; image.masked = false; done.resolve();
         },
       };
-      runs.push(run);
-      return run;
+      runs.push(run); return run;
     },
   };
   const module = { exports: {} };
+  const browserWindow = { innerHeight: 844, location: { pathname: '/' }, matchMedia: () => motion,
+    ...(observe ? { IntersectionObserver: Observer } : {}),
+    setTimeout: (callback, ms) => { timers.set(++timerId, { callback, ms }); return timerId; },
+    clearTimeout: id => timers.delete(id),
+  };
   vm.runInNewContext(compiled, {
-    module, exports: module.exports, IntersectionObserver: Observer,
-    window: { IntersectionObserver: Observer, innerHeight: 844, matchMedia: () => motion,
-      setTimeout: (callback, ms) => { timers.set(++timerId, { callback, ms }); return timerId; },
-      clearTimeout: id => timers.delete(id),
-    },
+    module, exports: module.exports, IntersectionObserver: Observer, window: browserWindow,
     require: name => {
       if (name === 'react') return {
-        useRef: () => refs[refIndex++], useEffect: effect => { install = effect; },
+        useRef: initial => { const i = refIndex++; return refs[i] ??= { current: i < 3 ? [root, image, placeholder][i] : initial }; },
+        useEffect: effect => { install = effect; },
       };
       assert.equal(name, 'ascii-reveal'); stats.imports++; return chunk.promise;
     },
   });
-  const render = (src = '/preview.jpg', opts = options) => {
+  let src = '/preview.jpg', currentOptions = options;
+  const render = () => {
     refIndex = 0;
-    module.exports.useAsciiImage(src, () => { stats.failures++; }, opts);
+    module.exports.useAsciiImage(src, () => { stats.failures++; }, currentOptions);
+  };
+  const signal = (near, inside) => {
+    for (const observer of [...observers]) {
+      const preload = parseFloat(observer.settings.rootMargin || '0') > 0;
+      if (observer.active && preload === near) observer.callback([{ isIntersecting: inside, intersectionRatio: inside ? 1 : 0 }]);
+    }
   };
   render();
   return { root, image, placeholder, attrs, stats, runs, timers,
     mount() { cleanup = install(); },
     unmount() { cleanup?.(); },
-    changeSource(src) { cleanup?.(); render(src); cleanup = install(); },
-    visible() { intersect?.(); },
+    remount() { cleanup?.(); refs = []; render(); cleanup = install(); },
+    updateOptions(opts) { cleanup?.(); currentOptions = opts; render(); cleanup = install(); },
+    changeSource(next) { cleanup?.(); src = next; render(); cleanup = install(); },
+    approach() { signal(true, true); },
+    enter() { rect.top = 100; rect.bottom = 500; signal(false, true); },
+    exit() { rect.top = 1800; rect.bottom = 2200; signal(false, false); },
     async moduleReady() { chunk.resolve(library); await flush(); },
     async moduleFailed() { chunk.reject(new Error('Chunk unavailable')); await flush(); },
     load() { image.complete = true; image.naturalWidth = 1080; image.dispatchEvent(new Event('load')); },
@@ -88,122 +98,119 @@ function harness({ complete = false, valid = true, reduced = false, options = {}
   };
 }
 
-test('server render, cached images and priority media never import or wait for animation', async () => {
+async function finish(h) { h.runs.at(-1).done.resolve(); await flush(); }
+
+test('SSR and initial priority media stay native without importing animation', async () => {
   const server = harness();
-  assert.equal(server.stats.imports, 0);
+  assert.equal(server.stats.imports, 0); assert.equal(server.attrs.size, 0);
   assert.equal(server.placeholder.hidden, true);
-  assert.equal(server.attrs.size, 0);
-  for (const config of [{ complete: true }, { options: { priority: true } }]) {
-    const h = harness(config); h.mount(); h.visible(); await flush();
-    assert.equal(h.stats.imports, 0);
-    assert.equal(h.timers.size, 0);
-    assert.equal(h.image.masked, false);
-    assert.equal(h.attrs.size, 0);
-    h.unmount();
+  for (const config of [{ options: { priority: true } }, { observe: false }]) {
+    const h = harness(config); h.mount(); h.approach(); h.enter(); await flush();
+    assert.equal(h.stats.imports, 0); assert.equal(h.image.masked, false);
+    assert.equal(h.timers.size, 0); h.unmount();
   }
 });
 
-test('offscreen images do no work; pending visible images become readable and clean up after one reveal', async () => {
-  const h = harness(); h.mount();
-  assert.equal(h.timers.size, 0);
+test('cached previews prepare early and reveal once at actual viewport entry', async () => {
+  const h = harness({ complete: true }); h.mount();
   assert.equal(h.stats.imports, 0);
-  h.visible(); await h.moduleReady();
-  assert.equal(h.attrs.get('aria-busy'), 'true');
-  assert.equal(h.placeholder.hidden, false);
-  assert.equal(h.stats.shimmering, 1);
-  assert.equal(h.image.masked, false);
-  h.load();
-  assert.equal(h.attrs.has('aria-busy'), false);
-  assert.equal(h.placeholder.hidden, true);
-  assert.equal(h.stats.reveals, 1);
-  h.runs[0].done.resolve(); await flush();
-  assert.equal(h.root.dataset.imageState, 'ready');
-  assert.equal(h.stats.shimmering, 0);
-  assert.equal(h.image.masked, false);
-  h.load();
-  assert.equal(h.stats.reveals, 1);
-  h.unmount();
+  h.approach(); await h.moduleReady();
+  assert.equal(h.stats.imports, 1); assert.equal(h.stats.reveals, 0);
+  assert.equal(h.stats.skeletons, 0); assert.equal(h.image.masked, false);
+  h.enter(); assert.equal(h.stats.reveals, 1);
+  await finish(h); assert.equal(h.root.dataset.imageState, 'ready');
+  assert.equal(h.image.masked, false); h.unmount();
 });
 
-test('an image arriving before the animation chunk never disappears when the late chunk arrives', async () => {
-  const h = harness(); h.mount(); h.visible(); h.load();
-  assert.equal(h.root.dataset.imageState, 'ready');
-  await h.moduleReady();
-  assert.equal(h.stats.skeletons, 0);
-  assert.equal(h.stats.reveals, 0);
-  assert.equal(h.image.masked, false);
-  h.unmount();
+test('a pending visible image shows a real skeleton, then decodes without replacing the image', async () => {
+  const h = harness(); h.mount(); h.approach(); await h.moduleReady();
+  assert.equal(h.placeholder.hidden, true); assert.equal(h.timers.size, 0);
+  h.enter(); assert.equal(h.attrs.get('aria-busy'), 'true');
+  assert.equal(h.placeholder.hidden, false); assert.equal(h.stats.shimmering, 1);
+  h.load(); assert.equal(h.placeholder.hidden, true);
+  assert.equal(h.attrs.has('aria-busy'), false); assert.equal(h.stats.reveals, 1);
+  await finish(h); assert.equal(h.stats.shimmering, 0); h.unmount();
 });
 
-test('late chunk success and failure cannot mutate a cleaned-up Strict Mode setup', async () => {
+test('image-before-module arrival remains visible and still receives its queued reveal', async () => {
+  const h = harness(); h.mount(); h.approach(); h.enter(); h.load();
+  assert.equal(h.image.masked, false); assert.equal(h.stats.reveals, 0);
+  await h.moduleReady(); assert.equal(h.stats.skeletons, 0);
+  assert.equal(h.stats.reveals, 1); await finish(h); h.unmount();
+});
+
+test('an image loaded offscreen waits for visible entry instead of spending its reveal early', async () => {
+  const h = harness(); h.mount(); h.approach(); await h.moduleReady(); h.load();
+  assert.equal(h.stats.reveals, 0); h.enter(); assert.equal(h.stats.reveals, 1);
+  await finish(h); h.unmount();
+});
+
+test('leaving before the module arrives queues the first reveal for the next visible entry', async () => {
+  const h = harness({ complete: true }); h.mount(); h.approach(); h.enter(); h.exit();
+  await h.moduleReady(); assert.equal(h.stats.reveals, 0);
+  h.enter(); assert.equal(h.stats.reveals, 1); await finish(h); h.unmount();
+});
+
+test('scroll, effect replay, filter remount and size changes cannot replay the same preview', async () => {
+  const h = harness({ complete: true }); h.mount(); h.approach(); await h.moduleReady(); h.enter();
+  await finish(h); h.exit(); h.enter(); h.remount(); h.approach(); h.enter();
+  h.updateOptions({ sizes: '80vw' }); h.approach(); h.enter(); await flush();
+  assert.equal(h.stats.reveals, 1); assert.equal(h.image.masked, false); h.unmount();
+});
+
+test('sorting priority changes do not reclassify an initially non-priority preview', async () => {
+  const h = harness({ complete: true }); h.mount(); h.updateOptions({ priority: true });
+  h.approach(); await h.moduleReady(); h.enter();
+  assert.equal(h.stats.reveals, 1); await finish(h); h.unmount();
+  const first = harness({ complete: true, options: { priority: true } }); first.mount();
+  first.updateOptions({ priority: false }); first.approach(); await first.moduleReady(); first.enter();
+  assert.equal(first.stats.reveals, 0); first.unmount();
+});
+
+test('a genuinely different source gets its own first reveal; unmount restores a playing image', async () => {
+  const h = harness({ complete: true }); h.mount(); h.approach(); await h.moduleReady(); h.enter();
+  await finish(h); h.changeSource('/replacement.jpg'); h.approach(); await flush(); h.enter();
+  assert.equal(h.stats.reveals, 2); assert.equal(h.image.masked, true);
+  h.unmount(); await flush(); assert.equal(h.image.masked, false); assert.equal(h.timers.size, 0);
+});
+
+test('late module success and failure cannot mutate a cleaned-up Strict Mode setup', async () => {
   for (const reject of [false, true]) {
-    const h = harness(); h.mount(); h.visible(); await flush(); h.unmount();
+    const h = harness(); h.mount(); h.approach(); h.enter(); await flush(); h.unmount();
     const writes = h.placeholder.writes;
     if (reject) await h.moduleFailed(); else await h.moduleReady();
-    assert.equal(h.placeholder.writes, writes);
-    assert.equal(h.stats.skeletons, 0);
-    assert.equal(h.timers.size, 0);
-    assert.equal(h.attrs.size, 0);
+    assert.equal(h.placeholder.writes, writes); assert.equal(h.stats.skeletons, 0);
+    assert.equal(h.timers.size, 0); assert.equal(h.attrs.size, 0);
   }
 });
 
-test('failed images and real loading deadlines stop busy indicators and expose a fallback once', async () => {
+test('failed images and the real loading deadline expose the fallback exactly once', async () => {
   for (const expire of [false, true]) {
-    const h = harness(); h.mount(); h.visible(); await h.moduleReady();
+    const h = harness(); h.mount(); h.approach(); await h.moduleReady(); h.enter();
     if (expire) h.expire(15000); else h.fail();
-    assert.equal(h.root.dataset.imageState, 'unavailable');
-    assert.equal(h.placeholder.hidden, true);
-    assert.equal(h.attrs.has('aria-busy'), false);
-    assert.equal(h.stats.shimmering, 0);
-    h.load(); h.fail();
-    assert.equal(h.stats.failures, 1);
-    assert.equal(h.stats.reveals, 0);
-    h.unmount();
+    assert.equal(h.root.dataset.imageState, 'unavailable'); assert.equal(h.placeholder.hidden, true);
+    assert.equal(h.attrs.has('aria-busy'), false); assert.equal(h.stats.shimmering, 0);
+    h.load(); h.fail(); assert.equal(h.stats.failures, 1); assert.equal(h.stats.reveals, 0); h.unmount();
   }
   const early = harness({ complete: true, valid: false }); early.mount();
-  assert.equal(early.stats.failures, 1);
-  assert.equal(early.stats.imports, 0);
-  early.unmount();
+  assert.equal(early.stats.failures, 1); assert.equal(early.stats.imports, 0); early.unmount();
 });
 
-test('reduced motion stops shimmer and immediately restores media even during a reveal', async () => {
-  const h = harness(); h.mount(); h.visible(); await h.moduleReady();
-  h.motion(true);
-  assert.equal(h.stats.shimmering, 0);
-  h.motion(false);
-  assert.equal(h.stats.shimmering, 1);
-  h.load(); assert.equal(h.image.masked, true);
-  h.motion(true); await flush();
-  assert.equal(h.image.masked, false);
-  assert.equal(h.root.dataset.imageState, 'ready');
-  h.unmount();
+test('reduced motion keeps cached content native and stops an active reveal without replay', async () => {
+  const cached = harness({ complete: true, reduced: true }); cached.mount(); cached.approach(); cached.enter();
+  await flush(); assert.equal(cached.stats.imports, 0); assert.equal(cached.stats.reveals, 0); cached.unmount();
+  const h = harness(); h.mount(); h.approach(); await h.moduleReady(); h.enter(); h.motion(true);
+  assert.equal(h.stats.shimmering, 0); h.motion(false); assert.equal(h.stats.shimmering, 1);
+  h.load(); assert.equal(h.image.masked, true); h.motion(true); await flush();
+  assert.equal(h.image.masked, false); h.motion(false); h.exit(); h.enter();
+  assert.equal(h.stats.reveals, 1); h.unmount();
 });
 
-test('source replacement and unmount restore media without stale callbacks from the old request', async () => {
-  const h = harness(); h.mount(); h.visible(); await h.moduleReady();
-  h.load(); assert.equal(h.image.masked, true);
-  h.image.complete = false;
-  h.changeSource('/replacement.jpg');
-  assert.equal(h.image.masked, false);
-  h.visible(); await flush(); h.load();
-  assert.equal(h.stats.reveals, 2);
-  h.unmount(); await flush();
-  assert.equal(h.image.masked, false);
-  assert.equal(h.stats.shimmering, 0);
-  assert.equal(h.timers.size, 0);
-});
-
-test('a blocked animation chunk or stalled decode cannot keep a successful image hidden', async () => {
-  const blocked = harness(); blocked.mount(); blocked.visible(); await blocked.moduleFailed();
-  blocked.load();
-  assert.equal(blocked.root.dataset.imageState, 'ready');
-  assert.equal(blocked.stats.failures, 0);
-  assert.equal(blocked.image.masked, false);
-  blocked.unmount();
-  const stalled = harness(); stalled.mount(); stalled.visible(); await stalled.moduleReady();
-  stalled.load(); assert.equal(stalled.image.masked, true);
-  stalled.expire(1500); await flush();
-  assert.equal(stalled.image.masked, false);
-  assert.equal(stalled.root.dataset.imageState, 'ready');
-  stalled.unmount();
+test('blocked modules and stalled decoding cannot leave a successful image hidden', async () => {
+  const blocked = harness(); blocked.mount(); blocked.approach(); blocked.enter(); await blocked.moduleFailed();
+  blocked.load(); assert.equal(blocked.root.dataset.imageState, 'ready');
+  assert.equal(blocked.stats.failures, 0); assert.equal(blocked.image.masked, false); blocked.unmount();
+  const stalled = harness({ complete: true }); stalled.mount(); stalled.approach(); await stalled.moduleReady(); stalled.enter();
+  assert.equal(stalled.image.masked, true); stalled.expire(1500); await flush();
+  assert.equal(stalled.image.masked, false); assert.equal(stalled.root.dataset.imageState, 'ready'); stalled.unmount();
 });

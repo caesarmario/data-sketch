@@ -235,3 +235,17 @@ MAIN RELEASE ROUTING - 2026-10-29 (ASIA/JAKARTA)
 [x] Add a regression that fails on the previous Netlify output; typecheck,
     lint, build, 37 tests and SEO checks pass. Canonical/content/version intact.
     Production verification evidence is retained separately for this release.
+
+CACHED VIEWPORT REVEAL - 2026-10-29 (ASIA/JAKARTA)
+------------------------------------------------
+[x] Separate image loading from first viewport entry. Prepare ASCII within 600px,
+    reveal at 15% visibility, and keep cached/image-before-module reveals queued.
+[x] Keep one reveal per route/source across sorting, scroll, effects and filter
+    remounts. Preserve initial priority media, SSR, reduced motion and fallbacks.
+[x] Cached-preview regression fails before the fix; 42 Data Sketch and 133
+    portfolio tests pass with required typechecks, lint, builds and SEO checks.
+[x] Ordinary-connection fresh/cache mobile/desktop runs capture actual glyph
+    frames on both sites. All 25 browser scenarios pass. See
+    docs/ascii-preview-loading.md and its current-machine evidence directory.
+[x] Keep v2026.10.29 for the same development date; retain public/editorial data.
+[ ] Merge to main and deploy only after a new owner release instruction.

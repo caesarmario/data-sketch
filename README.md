@@ -42,7 +42,7 @@ the optional legacy migration checks are outside its scope.
 - React + TypeScript + Vite + Tailwind, with locally served IBM Plex Sans and Space Grotesk.
 - `src/data/sketches.ts` owns episode content. Published entries require an image, local lesson path and LinkedIn URL; upcoming entries cannot reference an unreleased asset or live link.
 - `site.routes.mjs` is the typed public-route manifest used by rendering, metadata, sitemap and delivery rules. The site prerenders the gallery and nine published lesson pages.
-- One responsive DOM grid, accessible sort controls, noninteractive upcoming episodes, CSS interaction motion, and deferred ASCII loading for non-priority preview images. See [preview loading](docs/ascii-preview-loading.md).
+- One responsive DOM grid, accessible sort controls, noninteractive upcoming episodes, CSS interaction motion, and deferred ASCII loading with one viewport reveal for non-priority preview images, including cached images. See [preview loading](docs/ascii-preview-loading.md).
 - `src/entry-server.tsx` renders each manifest route during the build; `src/main.tsx` hydrates the matching page. No server runtime is deployed.
 - `site.config.mjs` owns site identity and SEO values. `scripts/seo.mjs` adapts the portfolio's metadata, escaping, and generated routing/header patterns.
 - `public/` contains only Data Sketch assets, fonts, favicon, OG artwork and generated SEO files. There is no Supabase, resume, PDF viewer, affiliate banner, or authentication dependency.
