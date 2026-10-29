@@ -3,6 +3,7 @@ import { siteConfig } from '../site.config.mjs';
 import { newsletterConfig } from '../newsletter.config.mjs';
 import { routeAliases, routeManifest } from '../site.routes.mjs';
 import { loadTypeScriptModule } from './load-typescript-module.mjs';
+import { asciiBootScript } from '../ascii-boot.mjs';
 import { calculateRouteLastmod } from './content-dates.mjs';
 
 const rootDir = fileURLToPath(new URL('../', import.meta.url));
@@ -167,6 +168,7 @@ export function renderHead({ route = rootRoute, preview = true, analyticsToken =
     ['name', 'twitter:creator', siteConfig.twitterHandle],
   ];
   const tags = [
+    `<script data-ascii-boot>${asciiBootScript}</script>`,
     `<title>${escapeHtml(route.title)}</title>`,
     ...metadata.map(([key, name, value]) => `<meta ${key}="${name}" content="${escapeHtml(value)}" />`),
     `<link rel="canonical" href="${escapeHtml(canonical)}" />`,

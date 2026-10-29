@@ -11,6 +11,8 @@ import UtilityLinks from './components/UtilityLinks';
 import NewsletterPage from './components/NewsletterPage';
 import PrivacyPage from './components/PrivacyPage';
 import { LinkedInIcon, GitHubIcon, MediumIcon, EmailIcon, XIcon } from './components/SocialIcons';
+import { claimAsciiBoot } from '../ascii-boot.mjs';
+import AsciiImage from './components/AsciiImage';
 
 const socials = [
   { label: 'LinkedIn', href: `${siteConfig.portfolioUrl}/linkedin`, Icon: LinkedInIcon },
@@ -116,7 +118,7 @@ function LessonPage({ sketch }: { sketch: LessonSketch }) {
           <p className="lesson-byline">By <a href={siteConfig.portfolioUrl}>Mario Caesar</a><span aria-hidden="true"> · </span><time dateTime={sketch.dateTime}>{sketch.month}</time></p>
         </header>
         <figure className="lesson-figure">
-          <img src={sketch.image} alt={sketch.imageAlt} width={1080} height={1350} decoding="async" {...{ fetchpriority: 'high' }} />
+          <AsciiImage src={sketch.image} alt={sketch.imageAlt} priority />
         </figure>
         <section className="lesson-walkthrough" aria-labelledby="walkthrough-heading">
           <h2 id="walkthrough-heading">Reading the sketch</h2>
@@ -139,6 +141,7 @@ function LessonPage({ sketch }: { sketch: LessonSketch }) {
 }
 
 export default function App({ route }: { route: SiteRoute }) {
+  useEffect(claimAsciiBoot, []);
   let content;
   if (route.kind === 'gallery') content = <GalleryPage />;
   else if (route.kind === 'newsletter') content = <NewsletterPage />;

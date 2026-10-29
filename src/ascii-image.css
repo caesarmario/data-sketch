@@ -1,13 +1,16 @@
-/* Preview-only enhancement; the native image remains in server-rendered HTML. */
+/* Native SSR is the default; the head bootstrap opts healthy JS into reveal. */
 .ascii-image {
   position: relative;
   isolation: isolate;
   --ascii-accent: hsl(var(--accent));
-  --ascii-skeleton: hsl(var(--muted-foreground) / .7);
-  --ascii-glyph: hsl(var(--accent) / .55);
+  --ascii-skeleton: hsl(var(--accent) / .85);
+  --ascii-glyph: hsl(var(--accent));
   --ascii-font: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
   --ascii-surface: hsl(var(--background));
 }
+
+html[data-ascii-boot='on'] .ascii-image[data-image-state='pending'] > img { opacity: 0; }
+html[data-ascii-boot='on'] .ascii-image[data-image-state='pending'] > .ascii-image-placeholder { display: block; }
 
 .ascii-image-placeholder {
   position: absolute;
@@ -15,15 +18,15 @@
   z-index: 1;
   overflow: hidden;
   background: hsl(var(--background));
-  font-size: 12px;
-  line-height: 14px;
   pointer-events: none;
+  user-select: none;
+  font: 14px/16px var(--ascii-font);
+  color: var(--ascii-skeleton);
 }
-
 .ascii-image-placeholder[hidden] { display: none; }
-.ascii-image-placeholder > .ars,
-.ascii-image-placeholder .ars-block { width: 100%; height: 100%; border-radius: 0; }
-.ascii-image-placeholder .ars-block { line-height: 14px; }
+.ascii-image-placeholder .ars,
+.ascii-image-placeholder .ars-block { display: block; width: 100%; height: 100%; overflow: hidden; border-radius: 0; }
+.ascii-image-placeholder .ars-base { display: block; white-space: pre; opacity: .55; }
 
 .ascii-image-fallback {
   display: grid;
@@ -35,3 +38,11 @@
   font-size: .875rem;
   text-align: center;
 }
+
+@media (prefers-reduced-motion: reduce) {
+  html[data-ascii-boot='on'] .ascii-image[data-image-state='pending'] > img { opacity: 1; }
+  html[data-ascii-boot='on'] .ascii-image > .ascii-image-placeholder { display: none; }
+}
+
+.ascii-diagram { width: 100%; aspect-ratio: 4 / 5; overflow: hidden; }
+.ascii-diagram > img { display: block; width: 100%; height: 100%; object-fit: contain; }

@@ -270,3 +270,24 @@ ASCII MOTION REFINEMENT - 2026-10-29 (ASIA/JAKARTA)
     Details and limits: docs/ascii-preview-loading.md.
 [x] Retain v2026.10.29 for the same development date and preserve editorial dates.
 [ ] Release this refinement to main/production only after a new owner instruction.
+
+GREEN ASCII FIRST PAINT - 2026-10-29 (ASIA/JAKARTA)
+-------------------------------------------------
+[x] Owner authorized implementation, push, both main merges and live verification.
+[x] Put deterministic green Dither in SSR and opt into masking before body paint.
+    Keep native no-JS/reduced-motion paths and a 5s failed-startup deadline.
+[x] Always run the first viewport reveal on a new document, including cached
+    files. Never expose an image before the animation; preserve file caching.
+[x] Portfolio uses its 180ms overlay fade on homepage and credential previews.
+    Separate section identities let shared Highlight/Mentoring artwork animate.
+[x] Data Sketch Decode is green, top-left, cinematic/1.8x, no mascot; cover 01-09,
+    primary lesson diagrams and newsletter samples without gating the beehiiv form.
+[x] Required checks pass: 50 Data Sketch + 141 portfolio tests, typechecks, lint,
+    builds, SEO, portfolio campaigns, HTTP smoke and clean design-detector output.
+[x] All 42 browser scenarios pass, including two cached refreshes per viewport/
+    page, actual green glyphs, delayed app code, failure-open startup, reduced
+    motion and no JS. Record before/after first-paint evidence and lab limits.
+[x] Retain v2026.10.29, theme/fonts, public copy, diagram bytes, editorial dates,
+    cache policy and canonical routing. Details: docs/ascii-preview-loading.md.
+    Release gate: verify remote commits and production browser/HTTP behavior
+    after publishing; keep those observed results in the release evidence.

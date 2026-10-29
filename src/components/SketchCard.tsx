@@ -2,6 +2,7 @@ import { useCallback, useState } from 'react';
 import { ArrowUpRight } from 'lucide-react';
 import type { Sketch } from '../data/sketches';
 import { useAsciiImage } from '../hooks/useAsciiImage';
+import { asciiPlaceholderHTML } from '../asciiPlaceholder';
 
 export default function SketchCard({ sketch, priority }: { sketch: Sketch; priority: boolean }) {
   const src = sketch.status === 'published' ? sketch.image : undefined;
@@ -33,7 +34,7 @@ export default function SketchCard({ sketch, priority }: { sketch: Sketch; prior
   return (
     <article className="sketch-card sketch-card-live">
       <a className="card-link" href={sketch.href} target="_blank" rel="noopener noreferrer" aria-labelledby={`episode-${sketch.id}`}>
-        <div ref={containerRef} className="sketch-image ascii-image" data-ascii-image="">
+        <div key={src} ref={containerRef} className="sketch-image ascii-image" data-ascii-image="" data-image-state="pending">
           {failed ? <div className="image-fallback" role="img" aria-label={sketch.imageAlt}>
             <span>Diagram preview unavailable</span><span className="text-accent">Open the original LinkedIn post <ArrowUpRight size={16} /></span>
           </div> : <img
@@ -41,7 +42,7 @@ export default function SketchCard({ sketch, priority }: { sketch: Sketch; prior
             loading={priority ? 'eager' : 'lazy'} {...{ fetchpriority: priority ? 'high' : 'auto' }}
             decoding="async"
           />}
-          <div ref={placeholderRef} className="ascii-image-placeholder" hidden aria-hidden="true" />
+          <div ref={placeholderRef} className="ascii-image-placeholder" hidden aria-hidden="true" dangerouslySetInnerHTML={{ __html: asciiPlaceholderHTML }} />
         </div>
         <div className="card-copy">
           <p className="card-meta">Episode {number}<span aria-hidden="true">/</span>{sketch.date}</p>

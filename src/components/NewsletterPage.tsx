@@ -3,6 +3,7 @@ import { newsletterConfig } from '../../newsletter.config.mjs';
 import { siteConfig } from '../../site.config.mjs';
 import { findPublishedSketch } from '../data/sketches';
 import NewsletterForm from './NewsletterForm';
+import AsciiImage from './AsciiImage';
 
 export default function NewsletterPage() {
   return (
@@ -22,7 +23,7 @@ export default function NewsletterPage() {
             return (
               <li key={id}>
                 <a className="newsletter-sample" href={sketch.lessonPath}>
-                  <img src={sketch.image} alt={sketch.imageAlt} width={1080} height={1350} loading="lazy" decoding="async" />
+                  <AsciiImage src={sketch.image} alt={sketch.imageAlt} />
                   <h3>{sketch.title}</h3>
                   <span className="newsletter-sample-action">Read lesson<ArrowUpRight size={16} aria-hidden="true" /></span>
                 </a>
