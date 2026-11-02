@@ -1,5 +1,6 @@
 export type PublishedSketch = {
   status: 'published';
+  caption?: string;
   href: string;
   lessonPath: string;
   image: string;
@@ -207,15 +208,40 @@ export const sketches: Sketch[] = [
     takeaway: 'Partitioning helps when it reduces the data a query reads. Verify that the workload can use it before expecting lower runtime or cost.',
   },
   {
-    id: 10, status: 'upcoming', title: 'Upcoming episode',
-    lesson: 'Episode 10 is planned. Its topic has not been announced.',
-    date: 'Coming Soon', category: 'Coming Soon', tags: ['Coming Soon', 'Data Sketch'],
-    teaserTitle: 'Upcoming episode', teaserDescription: 'Topic to be announced.',
+    id: 10, status: 'published', title: 'Data Contracts: What Should a Pipeline Promise?',
+    lesson: 'A data contract makes producer and consumer expectations explicit: schema, grain, data quality, freshness, ownership, and how changes are communicated.',
+    date: 'Oct 2026', category: 'Data Quality', tags: ['Data Contracts', 'Data Quality', 'Data Governance'],
+    dateTime: '2026-10', month: 'October 2026', lessonPath: '/sketches/data-contracts/',
+    modifiedAt: '2026-11-03',
+    href: 'https://lnkd.in/p/gV8bmSsB',
+    image: '/images/data-sketch/data-sketch-episode-10.jpg',
+    imageAlt: 'Data Contracts diagram connecting schema, grain, freshness, data quality, ownership, and change management',
+    caption: "[Data Sketch #10] 🤝﻿ Data Contracts: What Should a Pipeline Promise?\n\nWelcome back to Data Sketch. One diagram, one lesson from things I’ve learned in data engineering ✍️\n\nA pipeline can run perfectly and still surprise its downstream users.\n\n❗️ A column suddenly changes type.\n❗️A field disappears.\n❗️Yesterday’s daily table arrives three hours late.\n❗️A supposedly unique key starts producing duplicates.\n\nNothing necessarily “broke” from the producer’s point of view.\n\nBut something changed that the consumer was depending on.\n\nThat is where I find the idea of a data contract useful.\n\n👉﻿ A data contract is basically an explicit agreement between the team producing the data and the people or systems consuming it.\n\n❓ What schema should they expect?\n❓ What does one row represent?\n❓ When should the data arrive?\n❓ Which fields must be unique or non-null?\n❓ And who owns the dataset when something goes wrong?\n\nFor me, the interesting part is not the document itself.\n\nIt is making assumptions explicit before they quietly become dependencies.\n\nBecause once dashboards, models, or other pipelines depend on a dataset, changing it is no longer just an implementation detail.\n\nIt becomes a compatibility problem.\n\nThis diagram is the simple way I think about what a useful data contract should actually promise 🤝﻿\n\nCurious: does your team already define contracts between data producers and consumers?\n\nTags:\n#DataEngineering #DataContracts #DataQuality #DataGovernance #DataPipelines #AnalyticsEngineering #DataArchitecture #DataOps",
+    walkthrough: [
+      { heading: 'Schema and grain', body: 'Define expected columns, data types, allowed changes, primary keys, and uniqueness expectations.' },
+      { heading: 'Data quality', body: 'Agree on required fields, valid values, duplicate rules, and quality thresholds.' },
+      { heading: 'Freshness', body: 'Set the expected delivery time, refresh frequency, and freshness SLA.' },
+      { heading: 'Ownership', body: 'Identify the producer, consumer, and dataset owner.' },
+      { heading: 'Change management', body: 'Communicate breaking changes, version important changes, and coordinate with consumers.' },
+    ],
+    takeaway: 'Make assumptions explicit before downstream dashboards, models, and pipelines depend on them.',
   },
   {
     id: 11, status: 'upcoming', title: 'Upcoming episode',
     lesson: 'Episode 11 is planned. Its topic has not been announced.',
     date: 'Coming Soon', category: 'Coming Soon', tags: ['Coming Soon', 'Data Engineering'],
+    teaserTitle: 'Upcoming episode', teaserDescription: 'Topic to be announced.',
+  },
+  {
+    id: 12, status: 'upcoming', title: 'Upcoming episode',
+    lesson: 'Episode 12 is planned. Its topic has not been announced.',
+    date: 'Coming Soon', category: 'Coming Soon', tags: ['Coming Soon', 'Data Sketch'],
+    teaserTitle: 'Upcoming episode', teaserDescription: 'Topic to be announced.',
+  },
+  {
+    id: 13, status: 'upcoming', title: 'Upcoming episode',
+    lesson: 'Episode 13 is planned. Its topic has not been announced.',
+    date: 'Coming Soon', category: 'Coming Soon', tags: ['Coming Soon', 'Data Sketch'],
     teaserTitle: 'Upcoming episode', teaserDescription: 'Topic to be announced.',
   },
 ];

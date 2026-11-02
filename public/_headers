@@ -101,6 +101,14 @@
   X-Robots-Tag: noindex, follow
   Link: <https://datasketch.caesarmar.io/sketches/partitioning/>; rel="canonical", <https://datasketch.caesarmar.io/llms.txt>; rel="describedby"; type="text/markdown"
 
+/sketches/data-contracts/
+  Link: <https://datasketch.caesarmar.io/sketches/data-contracts/>; rel="canonical", <https://datasketch.caesarmar.io/llms.txt>; rel="describedby"; type="text/markdown", <https://datasketch.caesarmar.io/sketches/data-contracts/index.md>; rel="alternate"; type="text/markdown"
+
+/sketches/data-contracts/index.md
+  Content-Type: text/markdown; charset=utf-8
+  X-Robots-Tag: noindex, follow
+  Link: <https://datasketch.caesarmar.io/sketches/data-contracts/>; rel="canonical", <https://datasketch.caesarmar.io/llms.txt>; rel="describedby"; type="text/markdown"
+
 /assets/*
   Cache-Control: public, max-age=31536000, immutable
 

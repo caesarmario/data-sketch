@@ -1,6 +1,15 @@
 DATA SKETCH - HISTORICAL LAUNCH CHECKLIST
 Updated: 2026-10-02
 
+WEBSITE EPISODE SYNC - 2026-11-03
+[x] Verify Mario Caesar's live Data Sketch #10 post and preserve https://lnkd.in/p/gV8bmSsB.
+[x] Add the complete English caption to the lesson HTML and Markdown, retaining source paragraphs and emoji.
+[x] Add the full 1080 x 1350 Data Contracts diagram as an uncropped JPEG derivative.
+[x] Keep exactly three asset-free, noninteractive ??? previews on a new desktop row.
+[x] Preserve episodes 01-09, their image bytes, branding and existing styles.
+[x] Typecheck, lint, production build, 51 tests and SEO checks pass locally.
+Release verification: GitHub CI, merge and the production website are checked separately in the publication handoff.
+
 [x] Standalone React/Vite/Tailwind repo, release 1.0.0, separate launch branch.
 [x] Header wordmark, editorial hero, one responsive gallery DOM, footer/social links.
 [x] Header/footer refinement: remove node diagram, halve responsive wordmark width

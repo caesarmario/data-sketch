@@ -16,11 +16,11 @@ before(async () => {
 });
 after(async () => { await server?.close(); });
 
-test('eleven ordered episodes include nine published lessons and two asset-free teasers', () => {
-  assert.deepEqual(data.sketches.map(sketch => sketch.id), [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]);
+test('thirteen ordered episodes include ten published lessons and three asset-free teasers', () => {
+  assert.deepEqual(data.sketches.map(sketch => sketch.id), [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]);
   const published = data.sketches.filter(sketch => sketch.status === 'published');
-  assert.equal(published.length, 9);
-  assert.deepEqual(data.sketches.filter(sketch => sketch.status === 'upcoming').map(sketch => sketch.id), [10, 11]);
+  assert.equal(published.length, 10);
+  assert.deepEqual(data.sketches.filter(sketch => sketch.status === 'upcoming').map(sketch => sketch.id), [11, 12, 13]);
   for (const sketch of data.sketches) {
     if (sketch.status === 'upcoming') {
       assert.equal(sketch.image, undefined);
@@ -36,7 +36,7 @@ test('eleven ordered episodes include nine published lessons and two asset-free 
       assert.ok(sketch.walkthrough.length >= 3);
     }
   }
-  assert.deepEqual(fs.readdirSync('public/images/data-sketch').sort(), ['01', '02', '03', '04', '05', '06', '07', '08', '09'].map(number => `data-sketch-episode-${number}.jpg`));
+  assert.deepEqual(fs.readdirSync('public/images/data-sketch').sort(), ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10'].map(number => `data-sketch-episode-${number}.jpg`));
 });
 
 test('episodes 01-04 keep their original content, URLs and image bytes', () => {
@@ -54,6 +54,24 @@ test('episodes 01-04 keep their original content, URLs and image bytes', () => {
   });
 });
 
+test('episode 10 preserves the verified full caption in HTML and Markdown; unreleased previews have no assets or links', async () => {
+  const sketch = data.findPublishedSketch(10);
+  assert.equal(createHash('sha256').update(sketch.caption).digest('hex'), '7b899024ce602249b20c24a51b2747a09b34653194fd44f3e2ec264ff3b71cf3');
+  const { render } = await server.ssrLoadModule('/src/entry-server.tsx');
+  const html = render(sketch.lessonPath);
+  const encoded = sketch.caption.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;').replaceAll("'", '&#x27;');
+  assert.ok(html.includes(`<p class="lesson-summary whitespace-pre-wrap">${encoded}</p>`));
+  assert.ok(generateFiles()['sketches/data-contracts/index.md'].includes(sketch.caption));
+  const gallery = render('/');
+  const teasers = [...gallery.matchAll(/<article class="sketch-card teaser"[\s\S]*?<\/article>/g)];
+  assert.equal(teasers.length, 3);
+  for (const [teaser] of teasers) {
+    assert.ok(teaser.includes('???'));
+    assert.doesNotMatch(teaser, /<(?:a|img|button)\b|\b(?:href|src|tabindex)=/);
+  }
+  assert.equal((gallery.match(/class="preview-start"/g) ?? []).length, 1);
+});
+
 test('new episodes match the supplied image numbers, month precision and exact LinkedIn shortlinks', () => {
   const expected = [
     [5, 'Safe Publish Pattern Flow', '2026-07', 'July 2026', '/sketches/safe-publish-pattern/', 'https://lnkd.in/p/g7Qw3Uvf'],
@@ -68,7 +86,7 @@ test('new episodes match the supplied image numbers, month precision and exact L
     assert.deepEqual([sketch.id, sketch.title, sketch.dateTime, sketch.month, sketch.lessonPath, sketch.href], [id, title, dateTime, month, lessonPath, href]);
     assert.equal(sketch.image, `/images/data-sketch/data-sketch-episode-${String(id).padStart(2, '0')}.jpg`);
   }
-  assert.equal(data.findPublishedSketch(10), undefined);
+  assert.equal(data.findPublishedSketch(10).href, 'https://lnkd.in/p/gV8bmSsB');
   assert.equal(data.findPublishedSketch(11), undefined);
   assert.equal(data.findPublishedSketch(999), undefined);
 });
@@ -95,14 +113,14 @@ test('released JPEG derivatives remain 1080 by 1350 and below 200 KB', () => {
 
 test('sorting orders published episodes and keeps upcoming episodes last without mutating data', () => {
   const originalIds = data.sketches.map(sketch => sketch.id);
-  assert.deepEqual(data.sortSketches(data.sketches, 'latest').map(sketch => sketch.id), [9, 8, 7, 6, 5, 4, 3, 2, 1, 10, 11]);
-  assert.deepEqual(data.sortSketches(data.sketches, 'oldest').map(sketch => sketch.id), [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]);
+  assert.deepEqual(data.sortSketches(data.sketches, 'latest').map(sketch => sketch.id), [10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 11, 12, 13]);
+  assert.deepEqual(data.sortSketches(data.sketches, 'oldest').map(sketch => sketch.id), [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]);
   assert.deepEqual(data.sortSketches([], 'oldest'), []);
   assert.deepEqual(data.sketches.map(sketch => sketch.id), originalIds);
 });
 
-test('typed route manifest exposes the gallery, nine lessons, newsletter and privacy', () => {
-  assert.equal(routeManifest.length, 12);
+test('typed route manifest exposes the gallery, ten lessons, newsletter and privacy', () => {
+  assert.equal(routeManifest.length, 13);
   assert.deepEqual(routeManifest.map(route => route.path), [
     '/',
     '/newsletter',
@@ -116,6 +134,7 @@ test('typed route manifest exposes the gallery, nine lessons, newsletter and pri
     '/sketches/late-arriving-data/',
     '/sketches/data-freshness/',
     '/sketches/partitioning/',
+    '/sketches/data-contracts/',
   ]);
   assert.equal(routeAliases.get('/index.html'), '/');
   for (const route of routeManifest.filter(entry => entry.kind === 'lesson')) {
@@ -128,15 +147,15 @@ test('gallery prerender keeps LinkedIn cards, sibling lesson links and asset-fre
   const { render } = await server.ssrLoadModule('/src/entry-server.tsx');
   const html = render('/');
   assert.equal((html.match(/class="gallery-grid"/g) ?? []).length, 1);
-  assert.equal((html.match(/class="card-link"/g) ?? []).length, 9);
-  assert.equal((html.match(/class="read-lesson"/g) ?? []).length, 9);
-  assert.equal((html.match(/class="sketch-card teaser"/g) ?? []).length, 2);
+  assert.equal((html.match(/class="card-link"/g) ?? []).length, 10);
+  assert.equal((html.match(/class="read-lesson"/g) ?? []).length, 10);
+  assert.equal((html.match(/class="sketch-card teaser"/g) ?? []).length, 3);
   assert.equal((html.match(/loading="eager"/g) ?? []).length, 1);
-  assert.equal((html.match(/loading="lazy"/g) ?? []).length, 8);
-  assert.equal((html.match(/width="1080" height="1350"/g) ?? []).length, 9);
+  assert.equal((html.match(/loading="lazy"/g) ?? []).length, 9);
+  assert.equal((html.match(/width="1080" height="1350"/g) ?? []).length, 10);
   const text = html.replaceAll('<!-- -->', '');
-  assert.ok(text.includes('9 published'));
-  assert.ok(text.includes('2 upcoming'));
+  assert.ok(text.includes('10 published'));
+  assert.ok(text.includes('3 upcoming'));
   assert.equal((html.match(/disabled=""/g) ?? []).length, 3);
   for (const sketch of data.sketches.filter(entry => entry.status === 'published')) {
     assert.ok(html.includes(sketch.href));
@@ -191,15 +210,15 @@ test('metadata, schema, sitemap and text endpoints are route-aware and source-sa
     }
   }
   const files = generateFiles();
-  assert.equal((files['sitemap.xml'].match(/<loc>/g) ?? []).length, 12);
+  assert.equal((files['sitemap.xml'].match(/<loc>/g) ?? []).length, 13);
   assert.ok(files['sitemap.xml'].includes('xmlns:image='));
-  assert.equal((files['sitemap.xml'].match(/<image:image>/g) ?? []).length, 20);
+  assert.equal((files['sitemap.xml'].match(/<image:image>/g) ?? []).length, 22);
   assert.ok(!files['sitemap.xml'].includes('image:caption'));
   for (const route of routeManifest) assert.ok(files['sitemap.xml'].includes(`${siteConfig.baseUrl}${route.path}`));
-  assert.ok(!files['sitemap.xml'].includes('episode-10'));
+  assert.ok(files['sitemap.xml'].includes('data-sketch-episode-10.jpg'));
   assert.ok(!files['sitemap.xml'].includes('episode-11'));
-  assert.equal(new Set(routeManifest.map(route => route.title)).size, 12);
-  assert.equal(new Set(routeManifest.map(route => route.description)).size, 12);
+  assert.equal(new Set(routeManifest.map(route => route.title)).size, 13);
+  assert.equal(new Set(routeManifest.map(route => route.description)).size, 13);
   assert.ok(!files['sitemap.xml'].includes('humans.txt'));
   assert.ok(!files['sitemap.xml'].includes('llms.txt'));
   assert.ok(files['humans.txt'].includes('Author: Mario Caesar'));

@@ -93,3 +93,13 @@ Scanning more data than a query needs can increase runtime and cost. Partitionin
 Tags: Partitioning, Query Performance, Data Scanning
 
 [Read the lesson](https://datasketch.caesarmar.io/sketches/partitioning/index.md) | [Original LinkedIn post](https://lnkd.in/p/gbbYGrdV)
+
+## Data Contracts: What Should a Pipeline Promise?
+
+October 2026 | Data Quality
+
+A data contract makes producer and consumer expectations explicit: schema, grain, data quality, freshness, ownership, and how changes are communicated.
+
+Tags: Data Contracts, Data Quality, Data Governance
+
+[Read the lesson](https://datasketch.caesarmar.io/sketches/data-contracts/index.md) | [Original LinkedIn post](https://lnkd.in/p/gV8bmSsB)

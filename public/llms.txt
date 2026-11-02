@@ -18,6 +18,7 @@ Canonical site: https://datasketch.caesarmar.io/. Use the lesson sources below f
 - [Late-Arriving Data](https://datasketch.caesarmar.io/sketches/late-arriving-data/index.md): Five causes of late-arriving data: historical edits, backdated transactions, batch uploads, API or network lag, and delayed source systems.
 - [Data Freshness](https://datasketch.caesarmar.io/sketches/data-freshness/index.md): Check timestamps, expected partitions, row volume, source delays, and the freshness SLA before treating a successful pipeline run as ready.
 - [Partitioning: Why Scanning Less Data Matters](https://datasketch.caesarmar.io/sketches/partitioning/index.md): How partitioning can reduce scanning work when a query skips irrelevant partitions, and why runtime and cost benefits depend on the workload.
+- [Data Contracts: What Should a Pipeline Promise?](https://datasketch.caesarmar.io/sketches/data-contracts/index.md): Make producer and consumer expectations explicit through schema, grain, quality, freshness, ownership, and change management.
 
 ## Author source
 

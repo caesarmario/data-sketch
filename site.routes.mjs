@@ -166,6 +166,17 @@ export const routeManifest = Object.freeze([
     title: 'Partitioning: Why Scanning Less Data Matters | Data Sketch',
     description: 'How partitioning can reduce scanning work when a query skips irrelevant partitions, and why runtime and cost benefits depend on the workload.',
   },
+  {
+    kind: 'lesson',
+    path: '/sketches/data-contracts/',
+    output: 'sketches/data-contracts/index.html',
+    markdownPath: '/sketches/data-contracts/index.md',
+    markdownOutput: 'sketches/data-contracts/index.md',
+    slug: 'data-contracts',
+    episodeId: 10,
+    title: 'Data Contracts: What Should a Pipeline Promise? | Data Sketch',
+    description: 'Make producer and consumer expectations explicit through schema, grain, quality, freshness, ownership, and change management.',
+  },
 ]);
 
 /** @type {ReadonlyMap<string, string>} */
