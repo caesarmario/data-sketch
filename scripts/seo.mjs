@@ -261,7 +261,7 @@ function renderLessonMarkdown(route) {
   const sketch = publishedSketchForRoute(route);
   if (!sketch) throw new Error(`Published sketch is missing for route ${route.path}`);
   const steps = sketch.walkthrough.map(step => `### ${step.heading}\n\n${step.body}`).join('\n\n');
-  return `# ${sketch.title}\n\n> ${sketch.lesson}\n\n${sketch.month} | ${sketch.category}\n\nTags: ${sketch.tags.join(', ')}\n\nCanonical page: ${absoluteUrl(route.path)}\n\n![${sketch.imageAlt}](${absoluteUrl(sketch.image)})\n\n## Reading the sketch\n\n${steps}\n\n## Takeaway\n\n${sketch.takeaway}\n\n## Sources\n\n- [Original LinkedIn post](${sketch.href})\n- [Mario Caesar](${siteConfig.portfolioUrl}/index.md)\n`;
+  return `# ${sketch.title}\n\n> ${sketch.lesson}\n\n${sketch.month} | ${sketch.category}\n\nTags: ${sketch.tags.join(', ')}\n\nCanonical page: ${absoluteUrl(route.path)}\n\n![${sketch.imageAlt}](${absoluteUrl(sketch.image)})\n\n${sketch.caption ? `## LinkedIn caption\n\n${sketch.caption}\n\n` : ''}## Reading the sketch\n\n${steps}\n\n## Takeaway\n\n${sketch.takeaway}\n\n## Sources\n\n- [Original LinkedIn post](${sketch.href})\n- [Mario Caesar](${siteConfig.portfolioUrl}/index.md)\n`;
 }
 
 function renderHeaders(preview) {
