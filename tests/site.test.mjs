@@ -16,11 +16,11 @@ before(async () => {
 });
 after(async () => { await server?.close(); });
 
-test('thirteen ordered episodes include ten published lessons and three asset-free teasers', () => {
-  assert.deepEqual(data.sketches.map(sketch => sketch.id), [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]);
+test('twelve ordered cards include ten published lessons and two asset-free teasers', () => {
+  assert.deepEqual(data.sketches.map(sketch => sketch.id), [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]);
   const published = data.sketches.filter(sketch => sketch.status === 'published');
   assert.equal(published.length, 10);
-  assert.deepEqual(data.sketches.filter(sketch => sketch.status === 'upcoming').map(sketch => sketch.id), [11, 12, 13]);
+  assert.deepEqual(data.sketches.filter(sketch => sketch.status === 'upcoming').map(sketch => sketch.id), [11, 12]);
   for (const sketch of data.sketches) {
     if (sketch.status === 'upcoming') {
       assert.equal(sketch.image, undefined);
@@ -64,12 +64,13 @@ test('episode 10 preserves the verified full caption in HTML and Markdown; unrel
   assert.ok(generateFiles()['sketches/data-contracts/index.md'].includes(sketch.caption));
   const gallery = render('/');
   const teasers = [...gallery.matchAll(/<article class="sketch-card teaser"[\s\S]*?<\/article>/g)];
-  assert.equal(teasers.length, 3);
+  assert.equal(teasers.length, 2);
   for (const [teaser] of teasers) {
     assert.ok(teaser.includes('???'));
     assert.doesNotMatch(teaser, /<(?:a|img|button)\b|\b(?:href|src|tabindex)=/);
   }
-  assert.equal((gallery.match(/class="preview-start"/g) ?? []).length, 1);
+  assert.doesNotMatch(gallery, /preview-start/);
+  assert.doesNotMatch(fs.readFileSync('src/styles.css', 'utf8'), /preview-start/);
 });
 
 test('new episodes match the supplied image numbers, month precision and exact LinkedIn shortlinks', () => {
@@ -113,10 +114,35 @@ test('released JPEG derivatives remain 1080 by 1350 and below 200 KB', () => {
 
 test('sorting orders published episodes and keeps upcoming episodes last without mutating data', () => {
   const originalIds = data.sketches.map(sketch => sketch.id);
-  assert.deepEqual(data.sortSketches(data.sketches, 'latest').map(sketch => sketch.id), [10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 11, 12, 13]);
-  assert.deepEqual(data.sortSketches(data.sketches, 'oldest').map(sketch => sketch.id), [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]);
+  assert.deepEqual(data.sortSketches(data.sketches, 'latest').map(sketch => sketch.id), [10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 11, 12]);
+  assert.deepEqual(data.sortSketches(data.sketches, 'oldest').map(sketch => sketch.id), [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]);
   assert.deepEqual(data.sortSketches([], 'oldest'), []);
   assert.deepEqual(data.sketches.map(sketch => sketch.id), originalIds);
+});
+
+test('previews fill the desktop row and replenish after each third release in either sort order', () => {
+  const example = data.findPublishedSketch(10);
+  for (const [count, previewIds] of [[0, [1, 2, 3]], [9, [10, 11, 12]], [10, [11, 12]], [11, [12]], [12, [13, 14, 15]], [13, [14, 15]], [14, [15]], [15, [16, 17, 18]], [16, [17, 18]]]) {
+    const published = Array.from({ length: count }, (_, index) => ({ ...example, id: index + 1 }));
+    const original = structuredClone(published);
+    const entries = data.withUpcomingPreviews(published);
+    assert.deepEqual(published, original);
+    assert.deepEqual(entries.slice(0, count), published);
+    assert.deepEqual(entries.slice(count).map(entry => entry.id), previewIds);
+    assert.equal(entries.length % 3, 0);
+    for (const preview of entries.slice(count)) {
+      assert.equal(preview.status, 'upcoming');
+      assert.equal(preview.teaserTitle, 'Upcoming episode');
+      assert.equal(preview.date, 'Coming Soon');
+      for (const key of ['image', 'href', 'lessonPath', 'caption']) assert.equal(preview[key], undefined);
+    }
+    for (const order of ['oldest', 'latest']) {
+      const sorted = data.sortSketches(entries, order);
+      assert.deepEqual(sorted.slice(count).map(entry => entry.id), previewIds);
+      assert.equal(sorted.filter(entry => entry.status === 'published').length, count);
+    }
+    assert.deepEqual(data.withUpcomingPreviews(entries), entries);
+  }
 });
 
 test('typed route manifest exposes the gallery, ten lessons, newsletter and privacy', () => {
@@ -149,13 +175,13 @@ test('gallery prerender keeps LinkedIn cards, sibling lesson links and asset-fre
   assert.equal((html.match(/class="gallery-grid"/g) ?? []).length, 1);
   assert.equal((html.match(/class="card-link"/g) ?? []).length, 10);
   assert.equal((html.match(/class="read-lesson"/g) ?? []).length, 10);
-  assert.equal((html.match(/class="sketch-card teaser"/g) ?? []).length, 3);
+  assert.equal((html.match(/class="sketch-card teaser"/g) ?? []).length, 2);
   assert.equal((html.match(/loading="eager"/g) ?? []).length, 1);
   assert.equal((html.match(/loading="lazy"/g) ?? []).length, 9);
   assert.equal((html.match(/width="1080" height="1350"/g) ?? []).length, 10);
   const text = html.replaceAll('<!-- -->', '');
   assert.ok(text.includes('10 published'));
-  assert.ok(text.includes('3 upcoming'));
+  assert.ok(text.includes('2 upcoming'));
   assert.equal((html.match(/disabled=""/g) ?? []).length, 3);
   for (const sketch of data.sketches.filter(entry => entry.status === 'published')) {
     assert.ok(html.includes(sketch.href));

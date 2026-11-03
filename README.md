@@ -54,6 +54,16 @@ the optional legacy migration checks are outside its scope.
 3. Add the published lesson copy and route metadata without inventing details that are absent from the diagram or source caption. Set the episode's `modifiedAt` to the website editorial update date, separately from its publication month. Update `contentUpdated` for gallery changes, regenerate SEO and run all checks.
 4. Verify the diagram is readable, fully visible and keyboard-accessible at mobile, tablet and desktop sizes. Default episode ordering is ascending; latest-first sorts published episodes descending and keeps upcoming episodes at the end.
 
+Upcoming cards are generated from the published entries to fill the final
+three-column desktop row. Ten published episodes leave two `???` cards; eleven
+leave one; twelve start a new row of three. Keep the existing card design and
+responsive column counts. Only add an episode after its LinkedIn post is verified
+live, with the full caption, complete artwork and actual post link.
+
+Release hold (3 November 2026): push the preview-row correction to its branch,
+but merge it only together with verified episode 11 after that post is live.
+Do not enable auto-merge before that publication check.
+
 The topic filter intentionally remains off. Do not introduce a CMS, lightbox or GSAP without a separate brief.
 
 ## Editorial dates and SEO
