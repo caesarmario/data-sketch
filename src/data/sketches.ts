@@ -43,7 +43,20 @@ export function sortSketches(entries: readonly Sketch[], order: SortOrder) {
   return [...published, ...upcoming];
 }
 
-export const sketches: Sketch[] = [
+export function withUpcomingPreviews(entries: readonly Sketch[]): Sketch[] {
+  const published = entries.filter(sketch => sketch.status === 'published');
+  const nextId = Math.max(0, ...published.map(sketch => sketch.id)) + 1;
+  const previewCount = 3 - (published.length % 3);
+  const upcoming: Sketch[] = Array.from({ length: previewCount }, (_, index) => ({
+    id: nextId + index, status: 'upcoming', title: 'Upcoming episode',
+    lesson: `Episode ${nextId + index} is planned. Its topic has not been announced.`,
+    date: 'Coming Soon', category: 'Coming Soon', tags: ['Coming Soon', 'Data Sketch'],
+    teaserTitle: 'Upcoming episode', teaserDescription: 'Topic to be announced.',
+  }));
+  return [...published, ...upcoming];
+}
+
+export const sketches: Sketch[] = withUpcomingPreviews([
   {
     id: 1, status: 'published', title: 'Backfill Playbook: From Request to Release',
     lesson: 'A backfill needs more than a rerun. I use five stages: define the scope, choose a strategy, run by partition, validate the result, and publish atomically.',
@@ -226,25 +239,7 @@ export const sketches: Sketch[] = [
     ],
     takeaway: 'Make assumptions explicit before downstream dashboards, models, and pipelines depend on them.',
   },
-  {
-    id: 11, status: 'upcoming', title: 'Upcoming episode',
-    lesson: 'Episode 11 is planned. Its topic has not been announced.',
-    date: 'Coming Soon', category: 'Coming Soon', tags: ['Coming Soon', 'Data Engineering'],
-    teaserTitle: 'Upcoming episode', teaserDescription: 'Topic to be announced.',
-  },
-  {
-    id: 12, status: 'upcoming', title: 'Upcoming episode',
-    lesson: 'Episode 12 is planned. Its topic has not been announced.',
-    date: 'Coming Soon', category: 'Coming Soon', tags: ['Coming Soon', 'Data Sketch'],
-    teaserTitle: 'Upcoming episode', teaserDescription: 'Topic to be announced.',
-  },
-  {
-    id: 13, status: 'upcoming', title: 'Upcoming episode',
-    lesson: 'Episode 13 is planned. Its topic has not been announced.',
-    date: 'Coming Soon', category: 'Coming Soon', tags: ['Coming Soon', 'Data Sketch'],
-    teaserTitle: 'Upcoming episode', teaserDescription: 'Topic to be announced.',
-  },
-];
+]);
 
 export function findPublishedSketch(id: number) {
   const sketch = sketches.find(entry => entry.id === id);

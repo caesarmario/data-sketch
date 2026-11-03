@@ -96,7 +96,7 @@ function GalleryPage() {
         </div>
         <p className="sr-only" role="status">{order === 'oldest' ? 'Episode order, oldest first' : 'Latest episodes first'}</p>
         <ol className="gallery-grid">
-          {visible.map((sketch, index) => <li key={sketch.id} className={sketch.status === 'upcoming' && visible[index - 1]?.status !== 'upcoming' ? 'preview-start' : undefined}><SketchCard sketch={sketch} priority={index === 0 && sketch.status === 'published'} /></li>)}
+          {visible.map((sketch, index) => <li key={sketch.id}><SketchCard sketch={sketch} priority={index === 0 && sketch.status === 'published'} /></li>)}
         </ol>
       </section>
     </main>

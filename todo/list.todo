@@ -300,3 +300,13 @@ GREEN ASCII FIRST PAINT - 2026-10-29 (ASIA/JAKARTA)
     cache policy and canonical routing. Details: docs/ascii-preview-loading.md.
     Release gate: verify remote commits and production browser/HTTP behavior
     after publishing; keep those observed results in the release evidence.
+PREVIEW ROW FILL - OWNER REQUEST 2026-11-03
+----------------------------------------
+[x] Generate asset-free previews from published count: 10 + 2, 11 + 1,
+    12 + 3 on a new row; repeat for later releases in one existing gallery.
+[x] Remove forced preview row break; retain existing cards, responsive grid,
+    published entries, image bytes, captions and links.
+[x] Typecheck, lint, build, 52 tests and SEO pass; correction ready to push.
+[ ] HOLD MERGE until episode 11 is verified live on Mario's LinkedIn;
+    add its full caption, artwork and link on this branch, rerun checks,
+    then merge both changes together and verify production separately.
