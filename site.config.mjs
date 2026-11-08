@@ -10,7 +10,7 @@ export const siteConfig = {
   intro: 'I draw the checks and workflows behind SQL, data pipelines, and data warehouses, with short explanations for each sketch.',
   locale: 'en',
   themeColor: '#0a0a0a',
-  contentUpdated: '2026-11-03',
+  contentUpdated: '2026-11-08',
   ogImagePath: '/og-image.png',
   ogImageAlt: 'Data Sketch: data engineering visual notes. One diagram. One practical lesson.',
   twitterHandle: '@caesarmario_',

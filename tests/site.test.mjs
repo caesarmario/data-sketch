@@ -119,6 +119,24 @@ test('sorting orders published episodes and keeps upcoming episodes last without
   assert.deepEqual(data.sketches.map(sketch => sketch.id), originalIds);
 });
 
+test('gallery starts latest first in SSR and built HTML, with matching Markdown and priority image', async () => {
+  const { render } = await server.ssrLoadModule('/src/entry-server.tsx');
+  const expected = [10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 11, 12, 13];
+  for (const html of [render('/'), fs.readFileSync('dist/index.html', 'utf8')]) {
+    const ids = [...html.matchAll(/<h2 id="episode-(\d+)"/g)].map(match => Number(match[1]));
+    assert.deepEqual(ids, expected);
+    const controls = html.match(/<div class="sort-controls"[\s\S]*?<\/div>/)[0];
+    const buttons = [...controls.matchAll(/<button\b[^>]*aria-pressed="(true|false)"[^>]*>[\s\S]*?<\/svg>([^<]+)<\/button>/g)];
+    assert.deepEqual(buttons.map(match => [match[2], match[1]]), [['Latest first', 'true'], ['Episode order', 'false']]);
+    const eager = [...html.matchAll(/<img\b[^>]*loading="eager"[^>]*>/g)].map(match => match[0]);
+    assert.equal(eager.length, 1);
+    assert.match(eager[0], /src="\/images\/data-sketch\/data-sketch-episode-10\.jpg"/);
+    assert.match(eager[0], /fetch[Pp]riority="high"/);
+  }
+  const titles = [...generateFiles()['index.md'].matchAll(/^## (.+)$/gm)].map(match => match[1]);
+  assert.deepEqual(titles, expected.slice(0, 10).map(id => data.findPublishedSketch(id).title));
+});
+
 test('typed route manifest exposes the gallery, ten lessons, newsletter and privacy', () => {
   assert.equal(routeManifest.length, 13);
   assert.deepEqual(routeManifest.map(route => route.path), [

@@ -55,7 +55,7 @@ the optional legacy migration checks are outside its scope.
 1. Add only the released image under `public/images/data-sketch/` with a descriptive lowercase filename. Keep unreleased images outside the repo's public directory.
 2. Change the corresponding data entry to `status: 'published'` and provide its final metadata, alt text, image and LinkedIn URL. Preserve the episode ID.
 3. Add the published lesson copy and route metadata without inventing details that are absent from the diagram or source caption. Set the episode's `modifiedAt` to the website editorial update date, separately from its publication month. Update `contentUpdated` for gallery changes, regenerate SEO and run all checks.
-4. Verify the diagram is readable, fully visible and keyboard-accessible at mobile, tablet and desktop sizes. Default episode ordering is ascending; latest-first sorts published episodes descending and keeps upcoming episodes at the end.
+4. Verify the diagram is readable, fully visible and keyboard-accessible at mobile, tablet and desktop sizes. The gallery and its Markdown default to latest first. Sort controls appear as Latest first, then Episode order; only published episodes change order, with upcoming episodes always at the end. Newsletter uses the same outer shell as the gallery and privacy page, with the privacy page's 760px content measure.
 
 The topic filter intentionally remains off. Do not introduce a CMS, lightbox or GSAP without a separate brief.
 

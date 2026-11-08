@@ -151,9 +151,8 @@
   .newsletter-intro .hero-intro { max-width: 40rem; font-size: 1.0625rem; }
   /* Hallmark · macrostructure: Long Document · tone: editorial · anchor hue: existing green.
      Scoped newsletter refinement; the owner's palette and font pairing are locked. */
-  .site-shell-newsletter { max-width: 46rem; }
   .site-shell-newsletter .masthead-actions { width: auto; }
-  .newsletter-landing { max-width: 40rem; padding-block: clamp(2rem, 5vw, 3.5rem) 0; }
+  .newsletter-landing { padding-block: clamp(2rem, 5vw, 3.5rem) 0; }
   .newsletter-landing .newsletter-intro { margin-top: 0; }
   .newsletter-landing h1 { margin: 0; font-size: clamp(2rem, 4.5vw, 3rem); line-height: 1.12; letter-spacing: -.03em; text-wrap: balance; }
   .newsletter-landing .hero-intro { margin-top: 1.25rem; font-size: 1.0625rem; line-height: 1.6; }
@@ -185,7 +184,7 @@
   .newsletter-footer .utility-links-inline { max-width: 100%; margin: 0 0 1rem; padding: .5rem 0; border: 0; background: none; justify-content: flex-start; color: hsl(var(--muted-foreground)); font-size: .75rem; }
   .newsletter-footer .utility-version { color: inherit; }
   .newsletter-footer .utility-links a { min-height: 44px; color: inherit; }
-  .privacy-page { max-width: 760px; }
+  .newsletter-landing, .privacy-page { max-width: 760px; }
   .utility-links-inline { position: static; width: fit-content; max-width: calc(100% - 2.5rem); margin: 0 auto 1rem; flex-wrap: wrap; backdrop-filter: none; }
   .privacy-page h1 { font-size: clamp(2.15rem, 6vw, 3.5rem); }
   .privacy-updated { margin-top: 1.25rem; color: hsl(var(--muted-foreground)); font-size: .875rem; }

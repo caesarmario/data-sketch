@@ -32,14 +32,14 @@ test('editorial dates describe website updates without changing publication mont
 
 test('updating one episode changes only its lesson and the gallery lastmod', () => {
   const before = routeManifest.map(route => calculateRouteLastmod(route, sketches, siteConfig.contentUpdated));
-  const changed = sketches.map(sketch => sketch.id === 9 ? { ...sketch, modifiedAt: '2026-11-04' } : sketch);
+  const changed = sketches.map(sketch => sketch.id === 9 ? { ...sketch, modifiedAt: '2026-11-09' } : sketch);
   const after = routeManifest.map(route => calculateRouteLastmod(route, changed, siteConfig.contentUpdated));
   assert.deepEqual(routeManifest.filter((route, index) => before[index] !== after[index]).map(route => route.path), ['/', '/sketches/partitioning/']);
   for (const lesson of lessons) {
     assert.equal(calculateRouteLastmod(lesson, sketches, '2026-10-21'), routeLastmod(lesson));
   }
   const futureTeaser = [...sketches, { id: 14, status: 'upcoming', modifiedAt: '2099-01-01' }];
-  assert.equal(calculateRouteLastmod(gallery, futureTeaser, siteConfig.contentUpdated), '2026-11-03');
+  assert.equal(calculateRouteLastmod(gallery, futureTeaser, siteConfig.contentUpdated), siteConfig.contentUpdated);
 });
 
 test('editorial dates fail closed for missing, impossible or imprecise values', () => {

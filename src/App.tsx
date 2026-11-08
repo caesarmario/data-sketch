@@ -3,7 +3,7 @@ import { ArrowLeft, ArrowUpRight, Clock3, Globe, ListOrdered } from 'lucide-reac
 import { siteConfig } from '../site.config.mjs';
 import { newsletterConfig } from '../newsletter.config.mjs';
 import { routeManifest } from '../site.routes.mjs';
-import { findPublishedSketch, sketches, sortSketches, type PublishedSketch, type SortOrder } from './data/sketches';
+import { DEFAULT_SORT_ORDER, findPublishedSketch, sketches, sortSketches, type PublishedSketch, type SortOrder } from './data/sketches';
 import BackToTop from './components/BackToTop';
 import SketchCard from './components/SketchCard';
 import Spotlight from './components/Spotlight';
@@ -68,7 +68,7 @@ function Footer({ compact = false, newsletter = false }: { compact?: boolean; ne
 }
 
 function GalleryPage() {
-  const [order, setOrder] = useState<SortOrder>('oldest');
+  const [order, setOrder] = useState<SortOrder>(DEFAULT_SORT_ORDER);
   const [interactive, setInteractive] = useState(false);
   const published = sketches.filter(sketch => sketch.status === 'published').length;
   const visible = sortSketches(sketches, order);
@@ -90,8 +90,8 @@ function GalleryPage() {
         <div className="gallery-toolbar">
           <h2 id="gallery-heading" className="eyebrow">The sketchbook <span className="text-muted">/ {String(sketches.length).padStart(2, '0')}</span></h2>
           <div className="sort-controls" role="group" aria-label="Episode sort order">
-            <button type="button" disabled={!interactive} aria-pressed={order === 'oldest'} onClick={() => setOrder('oldest')}><ListOrdered size={14} aria-hidden="true" />Episode order</button>
             <button type="button" disabled={!interactive} aria-pressed={order === 'latest'} onClick={() => setOrder('latest')}><Clock3 size={14} aria-hidden="true" />Latest first</button>
+            <button type="button" disabled={!interactive} aria-pressed={order === 'oldest'} onClick={() => setOrder('oldest')}><ListOrdered size={14} aria-hidden="true" />Episode order</button>
           </div>
         </div>
         <p className="sr-only" role="status">{order === 'oldest' ? 'Episode order, oldest first' : 'Latest episodes first'}</p>

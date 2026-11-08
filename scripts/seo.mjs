@@ -9,7 +9,7 @@ import { renderAnalytics } from '../analytics.mjs';
 import { newsletterSampleBootScript, bootstrapNewsletterSamples, selectSampleIds } from '../newsletter-samples.mjs';
 
 const rootDir = fileURLToPath(new URL('../', import.meta.url));
-const { sketches } = await loadTypeScriptModule(rootDir, 'src/data/sketches.ts');
+const { DEFAULT_SORT_ORDER, sketches, sortSketches } = await loadTypeScriptModule(rootDir, 'src/data/sketches.ts');
 const publishedSketches = sketches.filter(sketch => sketch.status === 'published');
 const rootRoute = routeManifest.find(route => route.kind === 'gallery');
 if (!rootRoute) throw new Error('Gallery route is missing from the route manifest');
@@ -262,7 +262,7 @@ function renderInformationMarkdown(route) {
 }
 
 function renderGalleryMarkdown() {
-  const lessons = publishedSketches.map(sketch => `## ${sketch.title}\n\n${sketch.month} | ${sketch.category}\n\n${sketch.lesson}\n\nTags: ${sketch.tags.join(', ')}\n\n[Read the lesson](${absoluteUrl(sketch.lessonPath.replace(/\/$/, '/index.md'))}) | [Original LinkedIn post](${sketch.href})`).join('\n\n');
+  const lessons = sortSketches(publishedSketches, DEFAULT_SORT_ORDER).map(sketch => `## ${sketch.title}\n\n${sketch.month} | ${sketch.category}\n\n${sketch.lesson}\n\nTags: ${sketch.tags.join(', ')}\n\n[Read the lesson](${absoluteUrl(sketch.lessonPath.replace(/\/$/, '/index.md'))}) | [Original LinkedIn post](${sketch.href})`).join('\n\n');
   return `# Data Sketch\n\n> ${rootRoute.description}\n\nCanonical page: ${siteConfig.baseUrl}/\n\n${lessons}\n`;
 }
 

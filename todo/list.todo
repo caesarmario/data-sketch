@@ -319,3 +319,20 @@ NEWSLETTER RANDOM SAMPLES AND ANALYTICS - 2026-11-08
 Release execution: verify live build, fresh sample selection, route statuses
 and actual tracker requests after publishing main. Dashboard counts require
 provider access. Evidence and limits: docs/newsletter-random-analytics.md.
+
+GALLERY DEFAULT AND NEWSLETTER WIDTH - 2026-11-08
+-------------------------------------------------
+[x] Owner authorized implementation on the same branch and immediate main merge.
+[x] Default gallery SSR/hydration and Markdown to latest published first; put
+    Latest first before Episode order. Keep upcoming entries pinned at the end.
+[x] Share the 1280px page shell and privacy's 760px content measure on newsletter.
+    Preserve mobile masthead behavior, theme, fonts, form, random samples and ASCII.
+[x] Update gallery editorial date only; retain v2026.11.08 and lesson dates.
+[x] Regression fails before the fix; typecheck, lint, build, all 68 tests, SEO
+    and dev/preview HTTP checks pass. Layout detector has no findings.
+[x] Twelve Chromium cases pass: shared widths at 320/375/768/1440px, initial HTML,
+    delayed hydration, keyboard/mouse sorting, refresh, reduced motion, episode
+    10/1 reveals and real beehiiv iframe sizing. No email submitted.
+Release execution: push development, fast-forward main and verify actual live
+assets, sorting, responsive widths and CI. Evidence and limits:
+docs/gallery-order-newsletter-width.md.
