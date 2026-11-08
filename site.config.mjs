@@ -2,7 +2,7 @@ export const siteConfig = {
   name: 'Data Sketch',
   author: 'Mario Caesar',
   version: '1.0.2',
-  buildVersion: 'v2026.10.29',
+  buildVersion: 'v2026.11.08',
   baseUrl: 'https://datasketch.caesarmar.io',
   portfolioUrl: 'https://caesarmar.io',
   title: 'Data Sketch | Data Engineering Lessons by Mario Caesar',
@@ -18,6 +18,10 @@ export const siteConfig = {
     '/fonts/ibm-plex-sans-v23-latin-400-600.woff2',
     '/fonts/space-grotesk-v22-latin-700.woff2',
   ],
-  // Set a dedicated Data Sketch token in Netlify. Never reuse the portfolio token.
-  analyticsTokenEnv: 'CLOUDFLARE_WEB_ANALYTICS_TOKEN',
+  // Public IDs owned by Data Sketch. Portfolio analytics uses separate IDs.
+  analytics: {
+    hostname: 'datasketch.caesarmar.io',
+    umamiWebsiteId: 'daf49df6-d97c-46a5-adc4-596b58be9260',
+    cloudflareToken: 'bcab4397f11c4bb69df934e6a7c39b9c',
+  },
 };

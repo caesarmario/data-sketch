@@ -1,8 +1,8 @@
 export const newsletterConfig = {
   path: '/newsletter',
   privacyPath: '/privacy',
-  modifiedAt: '2026-10-22',
-  privacyModifiedAt: '2026-10-21',
+  modifiedAt: '2026-11-08',
+  privacyModifiedAt: '2026-11-08',
   title: 'Data Sketch Newsletter | Mario Caesar',
   heading: 'Data engineering, explained visually.',
   description: 'Data engineering diagrams and worked examples by Mario Caesar, with short explanations you can use in your own work. Two emails a month.',
@@ -36,7 +36,7 @@ export const newsletterConfig = {
     },
     {
       heading: 'Cookies and website visits',
-      body: 'The embedded beehiiv form can use cookies to remember referral information and subscription status. Data Sketch can also use Cloudflare Web Analytics to measure website visits. Your email address stays in the signup form; this website does not send form values to its own analytics.',
+      body: 'The embedded beehiiv form can use cookies to remember referral information and subscription status. I use Umami to count page visits and Cloudflare Web Analytics to measure visits and website performance. This website does not send your email address or signup form values to those services.',
     },
     {
       heading: 'Your choices',

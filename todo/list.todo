@@ -300,3 +300,22 @@ GREEN ASCII FIRST PAINT - 2026-10-29 (ASIA/JAKARTA)
     cache policy and canonical routing. Details: docs/ascii-preview-loading.md.
     Release gate: verify remote commits and production browser/HTTP behavior
     after publishing; keep those observed results in the release evidence.
+
+NEWSLETTER RANDOM SAMPLES AND ANALYTICS - 2026-11-08
+-------------------------------------------------
+[x] Owner authorized the same development branch, main merge and live checks.
+[x] Sync main fa53b3a; preserve published episode 10 and upcoming 11-13.
+[x] Choose two unique published samples once per document, with stable SSR
+    fallback, parser/hydration parity and no duplicate ASCII reveal.
+[x] Add dedicated production-domain Umami and Cloudflare loaders; omit them
+    from preview/dev and preserve privacy of form values and URL queries.
+[x] Update privacy copy, explicit newsletter/privacy dates and v2026.11.08;
+    preserve gallery/lesson dates, artwork, theme, fonts and existing routes.
+[x] Typecheck, lint, build, 67 tests, SEO and dev/preview HTTP checks pass.
+[x] All 19 production-build Chromium cases pass. Real vendor code is tested
+    with intercepted collectors; the form-readiness fixture submits no email.
+[x] Actual deploy-preview build: 13 noindex pages, empty sitemap, no analytics
+    even under the canonical hostname; preserve published sample selection.
+Release execution: verify live build, fresh sample selection, route statuses
+and actual tracker requests after publishing main. Dashboard counts require
+provider access. Evidence and limits: docs/newsletter-random-analytics.md.

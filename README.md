@@ -7,7 +7,10 @@ Production: https://datasketch.caesarmar.io/. Changes in the current development
 ## Newsletter
 
 The `/newsletter` page embeds the official Data Sketch beehiiv signup form and
-links to two published sample lessons. Subscribe links appear in the header and
+links to two randomly selected published lessons per page visit. The pair stays
+fixed while the form loads or the page rerenders; refresh selects again. Episodes
+still marked upcoming are excluded. Native HTML and Markdown retain two fixed
+published examples for no-JavaScript access and indexing. Subscribe links appear in the header and
 after each lesson; the portfolio links to the same page. `/privacy` explains the
 subscription data flow. Form configuration and public copy live in
 `newsletter.config.mjs`. See [integration and verification](docs/newsletter-integration.md)
@@ -41,7 +44,7 @@ the optional legacy migration checks are outside its scope.
 
 - React + TypeScript + Vite + Tailwind, with locally served IBM Plex Sans and Space Grotesk.
 - `src/data/sketches.ts` owns episode content. Published entries require an image, local lesson path and LinkedIn URL; upcoming entries cannot reference an unreleased asset or live link.
-- `site.routes.mjs` is the typed public-route manifest used by rendering, metadata, sitemap and delivery rules. The site prerenders the gallery and nine published lesson pages.
+- `site.routes.mjs` is the typed public-route manifest used by rendering, metadata, sitemap and delivery rules. The site prerenders the gallery, ten published lesson pages, newsletter and privacy pages.
 - One responsive DOM grid, accessible sort controls, noninteractive upcoming episodes, CSS interaction motion, and green ASCII-first images with one top-left Decode reveal at 1.8× on every refresh, including cached files. Gallery episodes 01–09, lesson diagrams and newsletter samples share this lifecycle. See [preview loading](docs/ascii-preview-loading.md).
 - `src/entry-server.tsx` renders each manifest route during the build; `src/main.tsx` hydrates the matching page. No server runtime is deployed.
 - `site.config.mjs` owns site identity and SEO values. `scripts/seo.mjs` adapts the portfolio's metadata, escaping, and generated routing/header patterns.
@@ -75,7 +78,18 @@ Use the existing Data Sketch Netlify site connected to this repository. Build: `
 
 Deploy previews and branch deploys emit `noindex, nofollow` in HTML and response headers, omit analytics and contain an empty sitemap. Crawling remains allowed so crawlers can read noindex. Unknown routes return actual 404; HTML aliases redirect to their clean canonical paths. `humans.txt` and `llms.txt` are public text files but stay outside the sitemap.
 
-Configure `CLOUDFLARE_WEB_ANALYTICS_TOKEN` only with the separate Data Sketch token. Unset means no beacon. Production-context builds alone may emit the configured beacon; preview deploys never do. This public beacon ID is not a credential. No cookies/storage or targeting are implemented by this app.
+`site.config.mjs` holds the dedicated public Umami website ID and Cloudflare
+beacon token. They are site identifiers, not credentials. The owner-supplied IDs
+are the source of truth; the old optional `CLOUDFLARE_WEB_ANALYTICS_TOKEN` environment
+variable is no longer required or read. Production builds emit one loader, which
+starts the two deferred classic scripts only on `datasketch.caesarmar.io`.
+Development/preview builds omit it, and localhost or other hostnames cannot start it.
+Umami excludes query strings and hashes; its before-send callback also removes
+form properties and sanitizes referrers. No signup-input tracking is implemented.
+The privacy page names both providers and links to their policies.
+
+Build `v2026.11.08` adds the newsletter randomization and analytics integration.
+See [implementation and verification](docs/newsletter-random-analytics.md).
 
 DNS, custom domain, HTTPS, Search Console submission and actual analytics verification are manual release gates. See [migration runbook](docs/migration.md).
 

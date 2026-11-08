@@ -245,7 +245,7 @@ test('shared utilities expose the configured build and accessible controls', asy
   const { render } = await server.ssrLoadModule('/src/entry-server.tsx');
   const html = render('/');
   assert.equal(siteConfig.version, '1.0.2');
-  assert.equal(siteConfig.buildVersion, 'v2026.10.29');
+  assert.equal(siteConfig.buildVersion, 'v2026.11.08');
   assert.ok(html.includes('aria-label="Site information"'));
   assert.ok(html.includes('href="/humans.txt"'));
   assert.ok(html.includes('href="/llms.txt"'));

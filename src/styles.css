@@ -170,6 +170,7 @@
   .newsletter-samples { margin-top: clamp(2.5rem, 6vw, 4rem); padding-top: 2rem; border-top: 1px solid hsl(var(--border)); }
   .newsletter-samples ul { display: grid; grid-template-columns: minmax(0, 1fr); gap: 2rem; margin-top: 1.5rem; }
   .newsletter-samples li { min-width: 0; }
+  html[data-newsletter-samples='pending'] .newsletter-samples ul { opacity: 0; }
   .newsletter-sample { display: flex; flex-direction: column; height: 100%; color: hsl(var(--foreground)); }
   .newsletter-sample img { display: block; width: 100%; height: auto; aspect-ratio: 4 / 5; object-fit: contain; background: hsl(var(--background)); }
   .newsletter-sample h3 { margin-top: 1rem; font-family: 'Space Grotesk', sans-serif; font-size: 1.0625rem; font-weight: 700; line-height: 1.4; }
