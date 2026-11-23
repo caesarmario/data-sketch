@@ -344,4 +344,7 @@ PREVIEW ROW FILL - OWNER REQUEST 2026-11-03
 [x] Remove forced preview row break; retain existing cards, responsive grid,
     published entries, image bytes, captions and links.
 [x] Typecheck, lint, build, 52 tests and SEO passed for the original draft.
-[ ] Release with verified episode 11 and verify production separately.
+[x] Verify episode 11 on Mario's personal LinkedIn and include its full artwork,
+    unchanged caption, and original shortlink in the combined release.
+[x] Typecheck, lint, build, all 69 tests, and SEO checks pass for episode 11.
+[ ] Verify the deployment preview, merge, and confirm production separately.

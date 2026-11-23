@@ -4,6 +4,16 @@
 
 Canonical page: https://datasketch.caesarmar.io/
 
+## Data Lineage: What Breaks If This Table Changes?
+
+November 2026 | Data Governance
+
+Before you change a table, trace its sources and see which dashboards and pipelines depend on it.
+
+Tags: Data Lineage, Data Architecture, Data Governance
+
+[Read the lesson](https://datasketch.caesarmar.io/sketches/data-lineage/index.md) | [Original LinkedIn post](https://lnkd.in/p/ghrbtu9Z)
+
 ## Data Contracts: What Should a Pipeline Promise?
 
 October 2026 | Data Quality

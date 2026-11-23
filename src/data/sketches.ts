@@ -240,6 +240,23 @@ export const sketches: Sketch[] = withUpcomingPreviews([
     ],
     takeaway: 'Make assumptions explicit before downstream dashboards, models, and pipelines depend on them.',
   },
+  {
+    id: 11, status: 'published', title: 'Data Lineage: What Breaks If This Table Changes?',
+    lesson: 'Before you change a table, trace its sources and see which dashboards and pipelines depend on it.',
+    date: 'Nov 2026', category: 'Data Governance', tags: ['Data Lineage', 'Data Architecture', 'Data Governance'],
+    dateTime: '2026-11', month: 'November 2026', lessonPath: '/sketches/data-lineage/',
+    modifiedAt: '2026-11-23',
+    href: 'https://lnkd.in/p/ghrbtu9Z',
+    image: '/images/data-sketch/data-sketch-episode-11.jpg',
+    imageAlt: 'A Newton’s cradle illustrates how a table change leads to upstream and downstream checks, dashboard and pipeline impact, and consumer notification.',
+    caption: "[Data Sketch #11] 🧬 Data Lineage: What Breaks If This Table Changes?\n\nWelcome back to Data Sketch. One diagram, one lesson from things I’ve learned in data engineering ✍️\n\nChanging a table can look harmless.\n\nRename one column.\nChange a data type.\nAdjust one piece of business logic.\n\nThe pipeline still runs, so everything should be fine... right?\n\nNot always.\n\nThat table might feed another transformation. That transformation might build a mart. The mart might power several dashboards, extracts, or even another pipeline.\n\nSuddenly, a small upstream change has a much bigger blast radius than expected.\n\nThis is why I find data lineage useful.\n\nBefore changing an important table, I want to understand where the data comes from, what transforms it, and most importantly, who depends on it downstream.\n\nFor me, lineage is not just a nice graph in a catalog.\n\nIt helps answer a very practical question:\nIf I change this table, what could I break?\n\nKnowing that before deployment makes schema changes, logic changes, and deprecations much safer.\n\nThis diagram is the simple mental model I use when thinking about upstream and downstream impact 🧬\n\nCurious: how do you usually check downstream dependencies before changing a table?\n\nTags:\n#DataEngineering #DataLineage #DataArchitecture #DataWarehouse #DataGovernance #DataPipelines #AnalyticsEngineering #DataOps",
+    walkthrough: [
+      { heading: 'Trace the upstream inputs', body: 'Find the source data and transformations that feed the table you plan to change.' },
+      { heading: 'Follow the downstream dependencies', body: 'Check the transformations and marts that read the table, then follow them to the dashboards, extracts, and pipelines they feed.' },
+      { heading: 'Notify affected consumers', body: 'Tell the people who depend on the changed data what will change before you deploy.' },
+    ],
+    takeaway: 'Before you rename a column or change its type, use lineage to find the consumers that could break even if the pipeline still runs.',
+  },
 ]);
 
 export function findPublishedSketch(id: number) {

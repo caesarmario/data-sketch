@@ -34,15 +34,15 @@ test('sampling is without replacement, bounded, and leaves the source catalog in
   assert.deepEqual(selectSampleIds(pool,0),[]); assert.deepEqual(selectSampleIds(pool,-1),[]);
 });
 
-test('all ten published episodes can be selected, including the latest episode 10', () => {
+test('all published episodes can be selected, including the latest episode', () => {
   const covered = new Set();
-  for (let i=0;i<10;i++) {
-    const r=reader(()=>i/10), ids=r.get({ querySelector:()=>null });
+  for (let i = 0; i < published.length; i++) {
+    const r = reader(() => i / published.length), ids = r.get({ querySelector: () => null });
     assert.equal(ids.length,2); assert.equal(new Set(ids).size,2);
     for (const id of ids) { assert.ok(published.includes(id)); covered.add(id); }
   }
   assert.deepEqual([...covered].sort((a,b)=>a-b),published);
-  assert.deepEqual(reader().get({ querySelector:()=>null }),[10,1]);
+  assert.deepEqual(reader().get({ querySelector: () => null }), [published.at(-1), 1]);
 });
 
 test('SSR and a failed parser bootstrap keep the existing published fallback cards', () => {
@@ -78,7 +78,8 @@ test('only newsletter HTML carries the bounded parser bootstrap and published ca
     assert.equal(head.includes('data-newsletter-sample-boot'),route.kind==='newsletter');
     if (route.kind!=='newsletter') continue;
     assert.ok(body.includes('data-sketch-episode-10.jpg'));
-    for (const id of [11,12,13]) assert.ok(!body.includes(`episode-${id}`));
+    assert.ok(body.includes('data-sketch-episode-11.jpg'));
+    for (const id of [12,13,14]) assert.ok(!body.includes(`episode-${id}`));
     assert.ok(html.includes('data-newsletter-sample-ids="2,8"'));
     assert.equal((html.match(/data-newsletter-episode=/g)??[]).length,2);
     assert.ok(html.indexOf('<script data-newsletter-sample-selection>')>html.indexOf('</main>'));

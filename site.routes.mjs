@@ -177,6 +177,17 @@ export const routeManifest = Object.freeze([
     title: 'Data Contracts: What Should a Pipeline Promise? | Data Sketch',
     description: 'Make producer and consumer expectations explicit through schema, grain, quality, freshness, ownership, and change management.',
   },
+  {
+    kind: 'lesson',
+    path: '/sketches/data-lineage/',
+    output: 'sketches/data-lineage/index.html',
+    markdownPath: '/sketches/data-lineage/index.md',
+    markdownOutput: 'sketches/data-lineage/index.md',
+    slug: 'data-lineage',
+    episodeId: 11,
+    title: 'Data Lineage: What Breaks If This Table Changes? | Data Sketch',
+    description: 'Trace what feeds a table and check which pipelines, dashboards, and consumers depend on it before deploying a change.',
+  },
 ]);
 
 /** @type {ReadonlyMap<string, string>} */

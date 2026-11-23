@@ -19,6 +19,7 @@ Canonical site: https://datasketch.caesarmar.io/. Use the lesson sources below f
 - [Data Freshness](https://datasketch.caesarmar.io/sketches/data-freshness/index.md): Check timestamps, expected partitions, row volume, source delays, and the freshness SLA before treating a successful pipeline run as ready.
 - [Partitioning: Why Scanning Less Data Matters](https://datasketch.caesarmar.io/sketches/partitioning/index.md): How partitioning can reduce scanning work when a query skips irrelevant partitions, and why runtime and cost benefits depend on the workload.
 - [Data Contracts: What Should a Pipeline Promise?](https://datasketch.caesarmar.io/sketches/data-contracts/index.md): Make producer and consumer expectations explicit through schema, grain, quality, freshness, ownership, and change management.
+- [Data Lineage: What Breaks If This Table Changes?](https://datasketch.caesarmar.io/sketches/data-lineage/index.md): Trace what feeds a table and check which pipelines, dashboards, and consumers depend on it before deploying a change.
 
 ## Author source
 

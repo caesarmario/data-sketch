@@ -63,9 +63,8 @@ leave one; twelve start a new row of three. Keep the existing card design and
 responsive column counts. Only add an episode after its LinkedIn post is verified
 live, with the full caption, complete artwork and actual post link.
 
-Release hold (3 November 2026): push the preview-row correction to its branch,
-but merge it only together with verified episode 11 after that post is live.
-Do not enable auto-merge before that publication check.
+The preview-row correction ships together with episode 11 after its LinkedIn
+publication was verified.
 
 The topic filter intentionally remains off. Do not introduce a CMS, lightbox or GSAP without a separate brief.
 
