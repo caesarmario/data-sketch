@@ -44,7 +44,7 @@ test('newsletter prerender offers a working fallback, published samples and priv
   assert.ok(html.includes('Two emails a month'));
   assert.ok(html.includes('/sketches/join-duplication-debugging/'));
   assert.ok(html.includes('/sketches/data-freshness/'));
-  for (const upcoming of [11, 12, 13]) assert.ok(!html.includes(`episode-${upcoming}`));
+  for (const upcoming of [12, 13, 14]) assert.ok(!html.includes(`episode-${upcoming}`));
   assert.ok(html.includes('<noscript>'));
   // Third-party DOM changes must happen after hydration, inside the form host.
   for (const route of routeManifest) {

@@ -203,9 +203,6 @@
   .gallery-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 2rem; }
   .gallery-grid > li:nth-child(3n + 1) { margin-top: 1.75rem; }
   .gallery-grid > li:nth-child(3n) { margin-top: 3.5rem; }
-  .gallery-grid > li.preview-start { grid-column: 1; margin-top: 1.75rem; }
-  .gallery-grid > li.preview-start + li { margin-top: 0; }
-  .gallery-grid > li.preview-start + li + li { margin-top: 3.5rem; }
 }
 @media (hover: hover) and (pointer: fine) {
   .sketch-card-live:hover {

@@ -336,3 +336,15 @@ GALLERY DEFAULT AND NEWSLETTER WIDTH - 2026-11-08
 Release execution: push development, fast-forward main and verify actual live
 assets, sorting, responsive widths and CI. Evidence and limits:
 docs/gallery-order-newsletter-width.md.
+
+PREVIEW ROW FILL - OWNER REQUEST 2026-11-03
+----------------------------------------
+[x] Generate asset-free previews from published count: 10 + 2, 11 + 1,
+    12 + 3 on a new row; repeat for later releases in one existing gallery.
+[x] Remove forced preview row break; retain existing cards, responsive grid,
+    published entries, image bytes, captions and links.
+[x] Typecheck, lint, build, 52 tests and SEO passed for the original draft.
+[x] Verify episode 11 on Mario's personal LinkedIn and include its full artwork,
+    unchanged caption, and original shortlink in the combined release.
+[x] Typecheck, lint, build, all 69 tests, and SEO checks pass for episode 11.
+[ ] Verify the deployment preview, merge, and confirm production separately.

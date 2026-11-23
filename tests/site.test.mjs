@@ -16,11 +16,11 @@ before(async () => {
 });
 after(async () => { await server?.close(); });
 
-test('thirteen ordered episodes include ten published lessons and three asset-free teasers', () => {
-  assert.deepEqual(data.sketches.map(sketch => sketch.id), [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]);
+test('twelve ordered cards include ten published lessons and two asset-free teasers', () => {
+  assert.deepEqual(data.sketches.map(sketch => sketch.id), [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]);
   const published = data.sketches.filter(sketch => sketch.status === 'published');
-  assert.equal(published.length, 10);
-  assert.deepEqual(data.sketches.filter(sketch => sketch.status === 'upcoming').map(sketch => sketch.id), [11, 12, 13]);
+  assert.equal(published.length, 11);
+  assert.deepEqual(data.sketches.filter(sketch => sketch.status === 'upcoming').map(sketch => sketch.id), [12]);
   for (const sketch of data.sketches) {
     if (sketch.status === 'upcoming') {
       assert.equal(sketch.image, undefined);
@@ -32,11 +32,11 @@ test('thirteen ordered episodes include ten published lessons and three asset-fr
       assert.ok(['www.linkedin.com', 'lnkd.in'].includes(source.hostname));
       assert.ok(fs.existsSync(`public${sketch.image}`));
       assert.ok(routeManifest.some(route => route.kind === 'lesson' && route.path === sketch.lessonPath && route.episodeId === sketch.id));
-      assert.match(sketch.dateTime, /^2026-(0[3-9]|10)$/);
+      assert.match(sketch.dateTime, /^2026-(0[3-9]|1[01])$/);
       assert.ok(sketch.walkthrough.length >= 3);
     }
   }
-  assert.deepEqual(fs.readdirSync('public/images/data-sketch').sort(), ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10'].map(number => `data-sketch-episode-${number}.jpg`));
+  assert.deepEqual(fs.readdirSync('public/images/data-sketch').sort(), ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11'].map(number => `data-sketch-episode-${number}.jpg`));
 });
 
 test('episodes 01-04 keep their original content, URLs and image bytes', () => {
@@ -54,22 +54,30 @@ test('episodes 01-04 keep their original content, URLs and image bytes', () => {
   });
 });
 
-test('episode 10 preserves the verified full caption in HTML and Markdown; unreleased previews have no assets or links', async () => {
-  const sketch = data.findPublishedSketch(10);
-  assert.equal(createHash('sha256').update(sketch.caption).digest('hex'), '7b899024ce602249b20c24a51b2747a09b34653194fd44f3e2ec264ff3b71cf3');
+test('published captions preserve the verified text in HTML and Markdown; unreleased previews have no assets or links', async () => {
   const { render } = await server.ssrLoadModule('/src/entry-server.tsx');
-  const html = render(sketch.lessonPath);
-  const encoded = sketch.caption.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;').replaceAll("'", '&#x27;');
-  assert.ok(html.includes(`<p class="lesson-summary whitespace-pre-wrap">${encoded}</p>`));
-  assert.ok(generateFiles()['sketches/data-contracts/index.md'].includes(sketch.caption));
+  const files = generateFiles();
+  for (const [id, hash] of [
+    [10, '7b899024ce602249b20c24a51b2747a09b34653194fd44f3e2ec264ff3b71cf3'],
+    [11, 'dcfbc7d8f97deca0a4452b54a8f4ad4c0d202275e38197c6554f91726283ab3d'],
+  ]) {
+    const sketch = data.findPublishedSketch(id);
+    assert.equal(createHash('sha256').update(sketch.caption).digest('hex'), hash);
+    const encoded = sketch.caption.replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;').replaceAll("'", '&#x27;');
+    for (const html of [render(sketch.lessonPath), fs.readFileSync(`dist${sketch.lessonPath}index.html`, 'utf8')]) {
+      assert.ok(html.includes(`<p class="lesson-summary whitespace-pre-wrap">${encoded}</p>`));
+    }
+    assert.ok(files[`${sketch.lessonPath.slice(1)}index.md`].includes(sketch.caption));
+  }
   const gallery = render('/');
   const teasers = [...gallery.matchAll(/<article class="sketch-card teaser"[\s\S]*?<\/article>/g)];
-  assert.equal(teasers.length, 3);
+  assert.equal(teasers.length, 1);
   for (const [teaser] of teasers) {
     assert.ok(teaser.includes('???'));
     assert.doesNotMatch(teaser, /<(?:a|img|button)\b|\b(?:href|src|tabindex)=/);
   }
-  assert.equal((gallery.match(/class="preview-start"/g) ?? []).length, 1);
+  assert.doesNotMatch(gallery, /preview-start/);
+  assert.doesNotMatch(fs.readFileSync('src/styles.css', 'utf8'), /preview-start/);
 });
 
 test('new episodes match the supplied image numbers, month precision and exact LinkedIn shortlinks', () => {
@@ -79,6 +87,7 @@ test('new episodes match the supplied image numbers, month precision and exact L
     [7, 'Late-Arriving Data', '2026-08', 'August 2026', '/sketches/late-arriving-data/', 'https://lnkd.in/p/ghHjf7Eb'],
     [8, 'Data Freshness', '2026-09', 'September 2026', '/sketches/data-freshness/', 'https://lnkd.in/p/gdfHCzTz'],
     [9, 'Partitioning: Why Scanning Less Data Matters', '2026-10', 'October 2026', '/sketches/partitioning/', 'https://lnkd.in/p/gbbYGrdV'],
+    [11, 'Data Lineage: What Breaks If This Table Changes?', '2026-11', 'November 2026', '/sketches/data-lineage/', 'https://lnkd.in/p/ghrbtu9Z'],
   ];
   for (const [id, title, dateTime, month, lessonPath, href] of expected) {
     const sketch = data.findPublishedSketch(id);
@@ -87,7 +96,7 @@ test('new episodes match the supplied image numbers, month precision and exact L
     assert.equal(sketch.image, `/images/data-sketch/data-sketch-episode-${String(id).padStart(2, '0')}.jpg`);
   }
   assert.equal(data.findPublishedSketch(10).href, 'https://lnkd.in/p/gV8bmSsB');
-  assert.equal(data.findPublishedSketch(11), undefined);
+  assert.equal(data.findPublishedSketch(12), undefined);
   assert.equal(data.findPublishedSketch(999), undefined);
 });
 
@@ -113,15 +122,40 @@ test('released JPEG derivatives remain 1080 by 1350 and below 200 KB', () => {
 
 test('sorting orders published episodes and keeps upcoming episodes last without mutating data', () => {
   const originalIds = data.sketches.map(sketch => sketch.id);
-  assert.deepEqual(data.sortSketches(data.sketches, 'latest').map(sketch => sketch.id), [10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 11, 12, 13]);
-  assert.deepEqual(data.sortSketches(data.sketches, 'oldest').map(sketch => sketch.id), [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]);
+  assert.deepEqual(data.sortSketches(data.sketches, 'latest').map(sketch => sketch.id), [11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 12]);
+  assert.deepEqual(data.sortSketches(data.sketches, 'oldest').map(sketch => sketch.id), [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]);
   assert.deepEqual(data.sortSketches([], 'oldest'), []);
   assert.deepEqual(data.sketches.map(sketch => sketch.id), originalIds);
 });
 
+test('previews fill the desktop row and replenish after each third release in either sort order', () => {
+  const example = data.findPublishedSketch(10);
+  for (const [count, previewIds] of [[0, [1, 2, 3]], [9, [10, 11, 12]], [10, [11, 12]], [11, [12]], [12, [13, 14, 15]], [13, [14, 15]], [14, [15]], [15, [16, 17, 18]], [16, [17, 18]]]) {
+    const published = Array.from({ length: count }, (_, index) => ({ ...example, id: index + 1 }));
+    const original = structuredClone(published);
+    const entries = data.withUpcomingPreviews(published);
+    assert.deepEqual(published, original);
+    assert.deepEqual(entries.slice(0, count), published);
+    assert.deepEqual(entries.slice(count).map(entry => entry.id), previewIds);
+    assert.equal(entries.length % 3, 0);
+    for (const preview of entries.slice(count)) {
+      assert.equal(preview.status, 'upcoming');
+      assert.equal(preview.teaserTitle, 'Upcoming episode');
+      assert.equal(preview.date, 'Coming Soon');
+      for (const key of ['image', 'href', 'lessonPath', 'caption']) assert.equal(preview[key], undefined);
+    }
+    for (const order of ['oldest', 'latest']) {
+      const sorted = data.sortSketches(entries, order);
+      assert.deepEqual(sorted.slice(count).map(entry => entry.id), previewIds);
+      assert.equal(sorted.filter(entry => entry.status === 'published').length, count);
+    }
+    assert.deepEqual(data.withUpcomingPreviews(entries), entries);
+  }
+});
+
 test('gallery starts latest first in SSR and built HTML, with matching Markdown and priority image', async () => {
   const { render } = await server.ssrLoadModule('/src/entry-server.tsx');
-  const expected = [10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 11, 12, 13];
+  const expected = [11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 12];
   for (const html of [render('/'), fs.readFileSync('dist/index.html', 'utf8')]) {
     const ids = [...html.matchAll(/<h2 id="episode-(\d+)"/g)].map(match => Number(match[1]));
     assert.deepEqual(ids, expected);
@@ -130,15 +164,15 @@ test('gallery starts latest first in SSR and built HTML, with matching Markdown 
     assert.deepEqual(buttons.map(match => [match[2], match[1]]), [['Latest first', 'true'], ['Episode order', 'false']]);
     const eager = [...html.matchAll(/<img\b[^>]*loading="eager"[^>]*>/g)].map(match => match[0]);
     assert.equal(eager.length, 1);
-    assert.match(eager[0], /src="\/images\/data-sketch\/data-sketch-episode-10\.jpg"/);
+    assert.match(eager[0], /src="\/images\/data-sketch\/data-sketch-episode-11\.jpg"/);
     assert.match(eager[0], /fetch[Pp]riority="high"/);
   }
   const titles = [...generateFiles()['index.md'].matchAll(/^## (.+)$/gm)].map(match => match[1]);
-  assert.deepEqual(titles, expected.slice(0, 10).map(id => data.findPublishedSketch(id).title));
+  assert.deepEqual(titles, expected.slice(0, 11).map(id => data.findPublishedSketch(id).title));
 });
 
-test('typed route manifest exposes the gallery, ten lessons, newsletter and privacy', () => {
-  assert.equal(routeManifest.length, 13);
+test('typed route manifest exposes the gallery, eleven lessons, newsletter and privacy', () => {
+  assert.equal(routeManifest.length, 14);
   assert.deepEqual(routeManifest.map(route => route.path), [
     '/',
     '/newsletter',
@@ -153,6 +187,7 @@ test('typed route manifest exposes the gallery, ten lessons, newsletter and priv
     '/sketches/data-freshness/',
     '/sketches/partitioning/',
     '/sketches/data-contracts/',
+    '/sketches/data-lineage/',
   ]);
   assert.equal(routeAliases.get('/index.html'), '/');
   for (const route of routeManifest.filter(entry => entry.kind === 'lesson')) {
@@ -165,15 +200,15 @@ test('gallery prerender keeps LinkedIn cards, sibling lesson links and asset-fre
   const { render } = await server.ssrLoadModule('/src/entry-server.tsx');
   const html = render('/');
   assert.equal((html.match(/class="gallery-grid"/g) ?? []).length, 1);
-  assert.equal((html.match(/class="card-link"/g) ?? []).length, 10);
-  assert.equal((html.match(/class="read-lesson"/g) ?? []).length, 10);
-  assert.equal((html.match(/class="sketch-card teaser"/g) ?? []).length, 3);
+  assert.equal((html.match(/class="card-link"/g) ?? []).length, 11);
+  assert.equal((html.match(/class="read-lesson"/g) ?? []).length, 11);
+  assert.equal((html.match(/class="sketch-card teaser"/g) ?? []).length, 1);
   assert.equal((html.match(/loading="eager"/g) ?? []).length, 1);
-  assert.equal((html.match(/loading="lazy"/g) ?? []).length, 9);
-  assert.equal((html.match(/width="1080" height="1350"/g) ?? []).length, 10);
+  assert.equal((html.match(/loading="lazy"/g) ?? []).length, 10);
+  assert.equal((html.match(/width="1080" height="1350"/g) ?? []).length, 11);
   const text = html.replaceAll('<!-- -->', '');
-  assert.ok(text.includes('10 published'));
-  assert.ok(text.includes('3 upcoming'));
+  assert.ok(text.includes('11 published'));
+  assert.ok(text.includes('1 upcoming'));
   assert.equal((html.match(/disabled=""/g) ?? []).length, 3);
   for (const sketch of data.sketches.filter(entry => entry.status === 'published')) {
     assert.ok(html.includes(sketch.href));
@@ -181,6 +216,7 @@ test('gallery prerender keeps LinkedIn cards, sibling lesson links and asset-fre
   }
   assert.ok(!html.includes('/sketches/episode-10'));
   assert.ok(!html.includes('/sketches/episode-11'));
+  assert.ok(!html.includes('/sketches/episode-12'));
 });
 
 test('each lesson prerenders source-bound copy, byline, month, image and LinkedIn source', async () => {
@@ -228,15 +264,16 @@ test('metadata, schema, sitemap and text endpoints are route-aware and source-sa
     }
   }
   const files = generateFiles();
-  assert.equal((files['sitemap.xml'].match(/<loc>/g) ?? []).length, 13);
+  assert.equal((files['sitemap.xml'].match(/<loc>/g) ?? []).length, 14);
   assert.ok(files['sitemap.xml'].includes('xmlns:image='));
-  assert.equal((files['sitemap.xml'].match(/<image:image>/g) ?? []).length, 22);
+  assert.equal((files['sitemap.xml'].match(/<image:image>/g) ?? []).length, 24);
   assert.ok(!files['sitemap.xml'].includes('image:caption'));
   for (const route of routeManifest) assert.ok(files['sitemap.xml'].includes(`${siteConfig.baseUrl}${route.path}`));
   assert.ok(files['sitemap.xml'].includes('data-sketch-episode-10.jpg'));
-  assert.ok(!files['sitemap.xml'].includes('episode-11'));
-  assert.equal(new Set(routeManifest.map(route => route.title)).size, 13);
-  assert.equal(new Set(routeManifest.map(route => route.description)).size, 13);
+  assert.ok(files['sitemap.xml'].includes('data-sketch-episode-11.jpg'));
+  assert.ok(!files['sitemap.xml'].includes('episode-12'));
+  assert.equal(new Set(routeManifest.map(route => route.title)).size, 14);
+  assert.equal(new Set(routeManifest.map(route => route.description)).size, 14);
   assert.ok(!files['sitemap.xml'].includes('humans.txt'));
   assert.ok(!files['sitemap.xml'].includes('llms.txt'));
   assert.ok(files['humans.txt'].includes('Author: Mario Caesar'));
