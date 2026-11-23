@@ -5,7 +5,8 @@
 - Read README and docs/migration.md before making routing or deployment changes.
 - Preserve the approved dark/green editorial style and local IBM Plex Sans / Space Grotesk fonts. Logo remains uncropped. No GSAP or new UI frameworks by default.
 - Episode content lives in src/data/sketches.ts; no unpublished image or hidden asset is allowed in public output. Keep one gallery DOM and stable episode IDs.
-- Episodes 01-09 are published; 10-11 are asset-free teasers. Source PNGs remain
+- Read current published/upcoming status from src/data/sketches.ts. Preserve
+  releases already on main; keep upcoming entries asset-free. Source PNGs remain
   outside public output; published JPEGs retain the full 1080 x 1350 artwork.
 - Keep supplied LinkedIn shortlinks verbatim. Their highlighted-post redirects
   can select a different shared update; do not strip parameters or infer a replacement URL.

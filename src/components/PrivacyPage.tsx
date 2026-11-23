@@ -12,7 +12,7 @@ export default function PrivacyPage() {
         <p className="privacy-updated">Updated <time dateTime={newsletterConfig.privacyModifiedAt}>{new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' }).format(new Date(`${newsletterConfig.privacyModifiedAt}T00:00:00Z`))}</time></p>
       </header>
       {newsletterConfig.privacySections.map(section => <section className="privacy-section" key={section.heading}><h2>{section.heading}</h2><p>{section.body}</p></section>)}
-      <p className="privacy-links"><a href="https://www.beehiiv.com/privacy">beehiiv privacy policy</a><a href="https://www.cloudflare.com/privacypolicy/">Cloudflare privacy policy</a><a href={`mailto:${newsletterConfig.contact}`}>Contact Mario about your information</a></p>
+      <p className="privacy-links"><a href="https://www.beehiiv.com/privacy">beehiiv privacy policy</a><a href="https://umami.is/privacy">Umami privacy policy</a><a href="https://www.cloudflare.com/privacypolicy/">Cloudflare privacy policy</a><a href={`mailto:${newsletterConfig.contact}`}>Contact Mario about your information</a></p>
     </main>
   );
 }

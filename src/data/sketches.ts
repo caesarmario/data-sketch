@@ -34,6 +34,7 @@ export type Sketch = {
 } & (PublishedSketch | UpcomingSketch);
 
 export type SortOrder = 'oldest' | 'latest';
+export const DEFAULT_SORT_ORDER: SortOrder = 'latest';
 
 export function sortSketches(entries: readonly Sketch[], order: SortOrder) {
   const published = entries

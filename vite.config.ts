@@ -54,7 +54,7 @@ export default defineConfig(({ command }) => {
       const requestPath = context.originalUrl ? new URL(context.originalUrl, 'http://localhost').pathname : context.path;
       const pathname = requestPath === '/index.html' ? '/' : requestPath;
       const route = findRoute(pathname) ?? routeManifest[0];
-      return html.replace('<!--seo-head-->', renderHead({ route, preview: command === 'serve' || isPreview(), analyticsToken: process.env[siteConfig.analyticsTokenEnv] ?? '' }));
+      return html.replace('<!--seo-head-->', renderHead({ route, preview: command === 'serve' || isPreview() }));
     },
     configureServer(server) { server.middlewares.use(routeGuard(root, true)); },
     configurePreviewServer(server) { server.middlewares.use(routeGuard(path.join(root, 'dist'), false)); },

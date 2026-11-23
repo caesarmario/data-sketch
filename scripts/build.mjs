@@ -2,8 +2,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { build } from 'vite';
-import { generateFiles, isPreview, renderHead, replaceHead } from './seo.mjs';
-import { siteConfig } from '../site.config.mjs';
+import { generateFiles, isPreview, renderHead, replaceHead, renderNewsletterSampleBootstrap } from './seo.mjs';
 import { routeManifest } from '../site.routes.mjs';
 
 await build();
@@ -14,11 +13,11 @@ const htmlPath = path.join(root, 'dist', 'index.html');
 const template = await fs.readFile(htmlPath, 'utf8');
 if (!template.includes('<!--app-html-->')) throw new Error('Prerender placeholder missing');
 const preview = isPreview();
-const analyticsToken = process.env[siteConfig.analyticsTokenEnv] ?? '';
 for (const route of routeManifest) {
   const output = path.join(root, 'dist', route.output);
-  const html = replaceHead(template, renderHead({ route, preview, analyticsToken }))
-    .replace('<!--app-html-->', render(route.path));
+  const html = replaceHead(template, renderHead({ route, preview }))
+    .replace('<!--app-html-->', render(route.path))
+    .replace('</body>', `${renderNewsletterSampleBootstrap(route)}\n</body>`);
   await fs.mkdir(path.dirname(output), { recursive: true });
   await fs.writeFile(output, html);
 }

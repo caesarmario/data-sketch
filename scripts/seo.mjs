@@ -5,9 +5,11 @@ import { routeAliases, routeManifest } from '../site.routes.mjs';
 import { loadTypeScriptModule } from './load-typescript-module.mjs';
 import { asciiBootScript } from '../ascii-boot.mjs';
 import { calculateRouteLastmod } from './content-dates.mjs';
+import { renderAnalytics } from '../analytics.mjs';
+import { newsletterSampleBootScript, bootstrapNewsletterSamples, selectSampleIds } from '../newsletter-samples.mjs';
 
 const rootDir = fileURLToPath(new URL('../', import.meta.url));
-const { sketches } = await loadTypeScriptModule(rootDir, 'src/data/sketches.ts');
+const { DEFAULT_SORT_ORDER, sketches, sortSketches } = await loadTypeScriptModule(rootDir, 'src/data/sketches.ts');
 const publishedSketches = sketches.filter(sketch => sketch.status === 'published');
 const rootRoute = routeManifest.find(route => route.kind === 'gallery');
 if (!rootRoute) throw new Error('Gallery route is missing from the route manifest');
@@ -150,7 +152,7 @@ function routeSchema(route) {
 }
 
 /** @param {{ route?: import('../site.routes.mjs').SiteRoute, preview?: boolean, analyticsToken?: string }} [options] */
-export function renderHead({ route = rootRoute, preview = true, analyticsToken = '' } = {}) {
+export function renderHead({ route = rootRoute, preview = true, analyticsToken = siteConfig.analytics.cloudflareToken } = {}) {
   if (analyticsToken && !/^[a-f\d]{32}$/i.test(analyticsToken)) throw new Error('Invalid dedicated Cloudflare Web Analytics token');
   const canonical = absoluteUrl(route.path);
   const image = routeImage(route);
@@ -169,6 +171,7 @@ export function renderHead({ route = rootRoute, preview = true, analyticsToken =
   ];
   const tags = [
     `<script data-ascii-boot>${asciiBootScript}</script>`,
+    route.kind === 'newsletter' ? `<script data-newsletter-sample-boot>${newsletterSampleBootScript}</script>` : '',
     `<title>${escapeHtml(route.title)}</title>`,
     ...metadata.map(([key, name, value]) => `<meta ${key}="${name}" content="${escapeHtml(value)}" />`),
     `<link rel="canonical" href="${escapeHtml(canonical)}" />`,
@@ -177,9 +180,15 @@ export function renderHead({ route = rootRoute, preview = true, analyticsToken =
     ...faviconLinks,
     ...siteConfig.fontPreloads.map(href => `<link rel="preload" href="${href}" as="font" type="font/woff2" crossorigin />`),
     `<script type="application/ld+json">${JSON.stringify(routeSchema(route)).replaceAll('<', '\\u003c')}</script>`,
-    !preview && analyticsToken ? `<script defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon="${escapeHtml(JSON.stringify({ token: analyticsToken }))}"></script>` : '',
+    !preview ? renderAnalytics({ ...siteConfig.analytics, cloudflareToken: analyticsToken }) : '',
   ].filter(Boolean).join('\n');
   return `<!--seo-head:start-->\n${tags}\n<!--seo-head:end-->`;
+}
+
+export function renderNewsletterSampleBootstrap(route) {
+  if (route.kind !== 'newsletter') return '';
+  const catalog = publishedSketches.map(({ id, title, lessonPath, image, imageAlt }) => ({ id, title, lessonPath, image, imageAlt }));
+  return `<script data-newsletter-sample-selection>(${bootstrapNewsletterSamples.toString()})(${JSON.stringify(catalog).replaceAll('<', '\\u003c')}, ${selectSampleIds.toString()});</script>`;
 }
 
 export function replaceHead(html, head) {
@@ -249,11 +258,11 @@ function renderInformationMarkdown(route) {
     return `# ${newsletterConfig.heading}\n\n> ${newsletterConfig.description}\n\nCanonical page: ${absoluteUrl(route.path)}\n\n${newsletterConfig.intro}\n\n${newsletterConfig.frequency}\n\n[${newsletterConfig.formCopy.button}](${newsletterConfig.formUrl})\n\n${newsletterConfig.formCopy.consent}\n\n## ${newsletterConfig.samplesHeading}\n\n${samples}\n\n[${newsletterConfig.authorLink}](${siteConfig.portfolioUrl}/)\n\n[Newsletter privacy](${absoluteUrl(newsletterConfig.privacyPath)})\n`;
   }
   const sections = newsletterConfig.privacySections.map(section => `## ${section.heading}\n\n${section.body}`).join('\n\n');
-  return `# Newsletter privacy\n\nCanonical page: ${absoluteUrl(route.path)}\n\nUpdated: ${newsletterConfig.privacyModifiedAt}\n\n${sections}\n\n## Contact and provider policies\n\n- [Contact Mario](mailto:${newsletterConfig.contact})\n- [beehiiv privacy policy](https://www.beehiiv.com/privacy)\n- [Cloudflare privacy policy](https://www.cloudflare.com/privacypolicy/)\n`;
+  return `# Newsletter privacy\n\nCanonical page: ${absoluteUrl(route.path)}\n\nUpdated: ${newsletterConfig.privacyModifiedAt}\n\n${sections}\n\n## Contact and provider policies\n\n- [Contact Mario](mailto:${newsletterConfig.contact})\n- [beehiiv privacy policy](https://www.beehiiv.com/privacy)\n- [Umami privacy policy](https://umami.is/privacy)\n- [Cloudflare privacy policy](https://www.cloudflare.com/privacypolicy/)\n`;
 }
 
 function renderGalleryMarkdown() {
-  const lessons = publishedSketches.map(sketch => `## ${sketch.title}\n\n${sketch.month} | ${sketch.category}\n\n${sketch.lesson}\n\nTags: ${sketch.tags.join(', ')}\n\n[Read the lesson](${absoluteUrl(sketch.lessonPath.replace(/\/$/, '/index.md'))}) | [Original LinkedIn post](${sketch.href})`).join('\n\n');
+  const lessons = sortSketches(publishedSketches, DEFAULT_SORT_ORDER).map(sketch => `## ${sketch.title}\n\n${sketch.month} | ${sketch.category}\n\n${sketch.lesson}\n\nTags: ${sketch.tags.join(', ')}\n\n[Read the lesson](${absoluteUrl(sketch.lessonPath.replace(/\/$/, '/index.md'))}) | [Original LinkedIn post](${sketch.href})`).join('\n\n');
   return `# Data Sketch\n\n> ${rootRoute.description}\n\nCanonical page: ${siteConfig.baseUrl}/\n\n${lessons}\n`;
 }
 

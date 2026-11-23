@@ -44,8 +44,7 @@ test('newsletter prerender offers a working fallback, published samples and priv
   assert.ok(html.includes('Two emails a month'));
   assert.ok(html.includes('/sketches/join-duplication-debugging/'));
   assert.ok(html.includes('/sketches/data-freshness/'));
-  assert.ok(!html.includes('episode-10'));
-  assert.ok(!html.includes('episode-11'));
+  for (const upcoming of [11, 12, 13]) assert.ok(!html.includes(`episode-${upcoming}`));
   assert.ok(html.includes('<noscript>'));
   // Third-party DOM changes must happen after hydration, inside the form host.
   for (const route of routeManifest) {
@@ -79,15 +78,15 @@ test('newsletter HTML and Markdown share the approved copy and show two full dia
   assert.ok(!footer.includes('Mario Caesar social profiles'));
 });
 
-test('newsletter edits keep the policy editorial date independent', () => {
+test('newsletter and privacy use their own explicit editorial dates', () => {
   const files = generateFiles();
   const policyRoute = routeManifest.find(route => route.kind === 'privacy');
   const signupRoute = routeManifest.find(route => route.kind === 'newsletter');
   const policy = fs.readFileSync('dist/privacy.html', 'utf8');
-  assert.equal(newsletterConfig.privacyModifiedAt, '2026-10-21');
+  assert.equal(newsletterConfig.privacyModifiedAt, '2026-11-08');
   assert.equal(policyRoute.modifiedAt, newsletterConfig.privacyModifiedAt);
   assert.equal(signupRoute.modifiedAt, newsletterConfig.modifiedAt);
-  assert.ok(policy.includes(`<time dateTime="${newsletterConfig.privacyModifiedAt}">21 October 2026</time>`) || policy.includes(`<time datetime="${newsletterConfig.privacyModifiedAt}">21 October 2026</time>`));
+  assert.ok(policy.includes(`<time dateTime="${newsletterConfig.privacyModifiedAt}">8 November 2026</time>`) || policy.includes(`<time datetime="${newsletterConfig.privacyModifiedAt}">8 November 2026</time>`));
   assert.ok(files['privacy/index.md'].includes(`Updated: ${newsletterConfig.privacyModifiedAt}`));
   const graph = JSON.parse(renderHead({ route: policyRoute, preview: false }).match(/<script type="application\/ld\+json">([\s\S]*?)<\/script>/)[1])['@graph'];
   assert.equal(graph.find(entry => entry['@type'] === 'WebPage').dateModified, newsletterConfig.privacyModifiedAt);

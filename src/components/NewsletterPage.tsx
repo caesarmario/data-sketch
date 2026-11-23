@@ -4,8 +4,10 @@ import { siteConfig } from '../../site.config.mjs';
 import { findPublishedSketch } from '../data/sketches';
 import NewsletterForm from './NewsletterForm';
 import AsciiImage from './AsciiImage';
+import { getNewsletterSampleIds } from '../newsletterSamples';
 
 export default function NewsletterPage() {
+  const sampleIds = getNewsletterSampleIds();
   return (
     <main id="main-content" className="newsletter-page newsletter-landing" tabIndex={-1}>
       <header className="newsletter-intro">
@@ -14,14 +16,14 @@ export default function NewsletterPage() {
         <p className="newsletter-frequency">{newsletterConfig.frequency}</p>
       </header>
       <NewsletterForm />
-      <section className="newsletter-samples" aria-labelledby="samples-heading">
+      <section className="newsletter-samples" aria-labelledby="samples-heading" data-newsletter-sample-ids={sampleIds.join(',')}>
         <h2 id="samples-heading">{newsletterConfig.samplesHeading}</h2>
         <ul>
-          {newsletterConfig.sampleEpisodeIds.map(id => {
+          {sampleIds.map(id => {
             const sketch = findPublishedSketch(id);
             if (!sketch) throw new Error(`Newsletter sample episode ${id} is missing`);
             return (
-              <li key={id}>
+              <li key={id} data-newsletter-episode={id}>
                 <a className="newsletter-sample" href={sketch.lessonPath}>
                   <AsciiImage src={sketch.image} alt={sketch.imageAlt} />
                   <h3>{sketch.title}</h3>

@@ -12,4 +12,8 @@ if (!route) throw new Error(`Unknown public route: ${window.location.pathname}`)
 const app = <React.StrictMode><App route={route} /></React.StrictMode>;
 if (container.querySelector('main')) hydrateRoot(container, app);
 else createRoot(container).render(app);
+// Dev uses CSR, so there is no parser bootstrap to release the sample list.
+if (!container.querySelector('main')) {
+  delete document.documentElement.dataset.newsletterSamples;
+}
 printConsoleGreeting();
